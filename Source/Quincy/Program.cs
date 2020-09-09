@@ -7,7 +7,7 @@ namespace Quincy
     {
         static void Main(string[] args)
         {
-            Logging.Log("Hello World!");
+            var quincyInstance = new Quincy("Quincy Renderer", 1280, 720);
         }
     }
 }

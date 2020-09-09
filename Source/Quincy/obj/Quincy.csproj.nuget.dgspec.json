@@ -1,17 +1,85 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Alex\\source\\repos\\Quincy\\Quincy\\Quincy.csproj": {}
+    "D:\\Projects\\Quincy\\Source\\Quincy\\Quincy.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Alex\\source\\repos\\Quincy\\Quincy\\Quincy.csproj": {
-      "version": "1.0.0",
+    "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net.CoreUI\\OpenGL.Net.CoreUI.csproj": {
+      "version": "0.5.2",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Alex\\source\\repos\\Quincy\\Quincy\\Quincy.csproj",
-        "projectName": "Quincy",
-        "projectPath": "C:\\Users\\Alex\\source\\repos\\Quincy\\Quincy\\Quincy.csproj",
+        "projectUniqueName": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net.CoreUI\\OpenGL.Net.CoreUI.csproj",
+        "projectName": "OpenGL.Net.CoreUI",
+        "projectPath": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net.CoreUI\\OpenGL.Net.CoreUI.csproj",
         "packagesPath": "C:\\Users\\Alex\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Alex\\source\\repos\\Quincy\\Quincy\\obj\\",
+        "outputPath": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net.CoreUI\\obj\\netcoreapp2.2\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Alex\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {
+              "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.csproj": {
+                "projectPath": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "dependencies": {
+            "WinApi": {
+              "target": "Package",
+              "version": "[4.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.1.2, 3.1.2]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.300\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.csproj": {
+      "version": "0.5.1",
+      "restore": {
+        "projectUniqueName": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.csproj",
+        "projectName": "OpenGL.Net",
+        "projectPath": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.csproj",
+        "packagesPath": "C:\\Users\\Alex\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\obj\\netcoreapp3.1\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Alex\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -27,6 +95,142 @@
         "frameworks": {
           "netcoreapp3.1": {
             "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.1.2, 3.1.2]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.300\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.Math.csproj": {
+      "version": "0.5.1",
+      "restore": {
+        "projectUniqueName": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.Math.csproj",
+        "projectName": "OpenGL.Net.Math",
+        "projectPath": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.Math.csproj",
+        "packagesPath": "C:\\Users\\Alex\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\obj\\netcoreapp3.1\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Alex\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "dependencies": {
+            "System.Numerics.Vectors": {
+              "target": "Package",
+              "version": "[4.5.0, )"
+            },
+            "System.Runtime.CompilerServices.Unsafe": {
+              "target": "Package",
+              "version": "[4.3.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.1.2, 3.1.2]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.300\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Projects\\Quincy\\Source\\Quincy\\Quincy.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Projects\\Quincy\\Source\\Quincy\\Quincy.csproj",
+        "projectName": "Quincy",
+        "projectPath": "D:\\Projects\\Quincy\\Source\\Quincy\\Quincy.csproj",
+        "packagesPath": "C:\\Users\\Alex\\.nuget\\packages\\",
+        "outputPath": "D:\\Projects\\Quincy\\Source\\Quincy\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Alex\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {
+              "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net.CoreUI\\OpenGL.Net.CoreUI.csproj": {
+                "projectPath": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net.CoreUI\\OpenGL.Net.CoreUI.csproj"
+              },
+              "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.csproj": {
+                "projectPath": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.csproj"
+              },
+              "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.Math.csproj": {
+                "projectPath": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.Math.csproj"
+              }
+            }
           }
         },
         "warningProperties": {

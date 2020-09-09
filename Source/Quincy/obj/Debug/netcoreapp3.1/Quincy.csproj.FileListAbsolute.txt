@@ -11,3 +11,9 @@ C:\Users\Alex\source\repos\Quincy\Quincy\obj\Debug\netcoreapp3.1\Quincy.csproj.C
 C:\Users\Alex\source\repos\Quincy\Quincy\obj\Debug\netcoreapp3.1\Quincy.dll
 C:\Users\Alex\source\repos\Quincy\Quincy\obj\Debug\netcoreapp3.1\Quincy.pdb
 C:\Users\Alex\source\repos\Quincy\Quincy\obj\Debug\netcoreapp3.1\Quincy.genruntimeconfig.cache
+D:\Projects\Quincy\Source\Quincy\obj\Debug\netcoreapp3.1\Quincy.csprojAssemblyReference.cache
+D:\Projects\Quincy\Source\Quincy\obj\Debug\netcoreapp3.1\Quincy.AssemblyInfoInputs.cache
+D:\Projects\Quincy\Source\Quincy\obj\Debug\netcoreapp3.1\Quincy.AssemblyInfo.cs
+D:\Projects\Quincy\Source\Quincy\obj\Debug\netcoreapp3.1\Quincy.csproj.CoreCompileInputs.cache
+D:\Projects\Quincy\Source\Quincy\obj\Debug\netcoreapp3.1\Quincy.dll
+D:\Projects\Quincy\Source\Quincy\obj\Debug\netcoreapp3.1\Quincy.pdb

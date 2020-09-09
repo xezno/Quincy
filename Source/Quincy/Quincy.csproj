@@ -3,6 +3,13 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Other\OpenGL.Net\Source\OpenGL.Net.CoreUI\OpenGL.Net.CoreUI.csproj" />
+    <ProjectReference Include="..\..\Other\OpenGL.Net\Source\OpenGL.Net\OpenGL.Net.csproj" />
+    <ProjectReference Include="..\..\Other\OpenGL.Net\Source\OpenGL.Net\OpenGL.Net.Math.csproj" />
+  </ItemGroup>
 
 </Project>
