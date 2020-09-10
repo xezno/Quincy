@@ -1,8 +1,6 @@
-﻿using OpenGL.CoreUI;
-using Quincy.MathUtils;
+﻿using OpenGL;
+using OpenGL.CoreUI;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace Quincy
 {
@@ -28,7 +26,7 @@ namespace Quincy
             window.DepthBits = 24;
             window.SwapInterval = 0;
 
-            window.Create(0, 0, (uint)windowResX + 16, (uint)windowResY + 16, NativeWindowStyles.Caption | NativeWindowStyles.Border);
+            window.Create(128, 128, (uint)windowResX + 16, (uint)windowResY + 16, NativeWindowStyles.Caption | NativeWindowStyles.Border);
             window.Caption = windowTitle;
 
             window.Show();
@@ -39,7 +37,8 @@ namespace Quincy
 
         private void Render(object sender, NativeWindowEventArgs e)
         {
-            // TODO
+            Gl.ClearColor(100/255f, 149/255f, 237/255f, 1.0f);
+            Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
 
         public void Close()
