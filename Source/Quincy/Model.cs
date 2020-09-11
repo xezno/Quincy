@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -15,7 +16,7 @@ namespace Quincy
 {
     class Model
     {
-        private List<Mesh> meshes;
+        private List<Mesh> meshes = new List<Mesh>();
         private string directory;
 
         public Model(string path)
@@ -23,20 +24,20 @@ namespace Quincy
             LoadModel(path);
         }
 
-        public void Draw(Shader shader)
+        public void Draw(Camera camera, Shader shader)
         {
             foreach (var mesh in meshes)
             {
-                mesh.Draw(shader);
+                mesh.Draw(camera, shader);
             }
         }
 
         private void LoadModel(string path)
         {
             var importer = new AssimpContext();
-            var scene = importer.ImportFile(path, PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs);
+            var scene = importer.ImportFile(path, PostProcessSteps.Triangulate | PostProcessSteps.PreTransformVertices);
 
-            directory = Path.GetDirectoryName(directory);
+            directory = Path.GetDirectoryName(path);
 
             ProcessNode(scene.RootNode, scene);
         }
@@ -46,11 +47,16 @@ namespace Quincy
             for (int i = 0; i < node.MeshCount; ++i)
             {
                 var mesh = scene.Meshes[node.MeshIndices[i]];
-                meshes.Add(ProcessMesh(mesh, scene));
+                meshes.Add(ProcessMesh(mesh, scene, node.Transform));
+            }
+
+            foreach (var child in node.Children)
+            {
+                ProcessNode(child, scene);
             }
         }
 
-        private Mesh ProcessMesh(Assimp.Mesh mesh, Assimp.Scene scene)
+        private Mesh ProcessMesh(Assimp.Mesh mesh, Assimp.Scene scene, Matrix4x4 transform)
         {
             List<Vertex> vertices = new List<Vertex>();
             List<uint> indices = new List<uint>();
@@ -96,7 +102,14 @@ namespace Quincy
                 textures.AddRange(specularMaps);
             }
 
-            return new Mesh(vertices, indices, textures);
+            var oglTransform = new Matrix4x4f(
+                transform.A1, transform.A2, transform.A3, transform.A4,
+                transform.B1, transform.B2, transform.B3, transform.B4,
+                transform.C1, transform.C2, transform.C3, transform.C4,
+                transform.D1, transform.D2, transform.D3, transform.D4
+            );
+
+            return new Mesh(vertices, indices, textures, oglTransform);
         }
 
         List<Texture> LoadMaterialTextures(Material material, TextureType textureType, string typeName)
@@ -106,11 +119,19 @@ namespace Quincy
             for (int i = 0; i < material.GetMaterialTextureCount(textureType); ++i)
             {
                 material.GetMaterialTexture(textureType, i, out var textureSlot);
+
+                if (string.IsNullOrEmpty(textureSlot.FilePath))
+                    continue;
+
                 var texture = new Texture()
                 {
                     Id = TextureFromFile(textureSlot.FilePath, directory),
-                    Type = typeName
+                    Type = typeName,
+                    Path = $"{directory}/{textureSlot.FilePath}"
                 };
+
+                // Add to texture container so that we don't reload it later
+                TextureContainer.Textures.Add(texture);
                 textures.Add(texture);
             }
 
@@ -119,11 +140,18 @@ namespace Quincy
 
         private uint TextureFromFile(string fileName, string directory)
         {
+            // Check if already loaded
+            if (TextureContainer.Textures.Any(t => t.Path == $"{directory}/{fileName}"))
+            {
+                // Already loaded, we'll just use that
+                return TextureContainer.Textures.First(t => t.Path == $"{directory}/{fileName}").Id;
+            }
+
+            // Not loaded, load from scratch
             var texturePtr = Gl.GenTexture();
             Gl.BindTexture(TextureTarget.Texture2d, texturePtr);
             using var textureStream = new MemoryStream();
             var image = Image.FromFile($"{directory}/{fileName}");
-            Logging.Log($"Image format: {image.PixelFormat}");
 
             var imageFormat = OpenGL.PixelFormat.Bgra;
             if (image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format24bppRgb ||
@@ -144,8 +172,7 @@ namespace Quincy
             image.Dispose();
             Marshal.FreeHGlobal(textureDataPtr);
 
-            Logging.Log($"Texture {fileName} ({directory}): ptr {texturePtr}");
-
+            Logging.Log($"Loaded texture {fileName} ({directory}), ptr {texturePtr}");
             Gl.BindTexture(TextureTarget.Texture2d, 0);
 
             return texturePtr;

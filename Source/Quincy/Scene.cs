@@ -8,15 +8,15 @@
 
         public Scene()
         {
-            testModel = new Model("vtech/scene.gltf");
-            shader = new Shader("shaders/frag.glsl", "shaders/vert.glsl");
+            testModel = new Model("Content/Models/vtech/scene.gltf");
+            shader = new Shader("Content/Shaders/frag.glsl", "Content/Shaders/vert.glsl");
             camera = new Camera();
         }
 
         public void Render()
         {
-            shader.Use();
-            testModel.Draw(shader);
+            camera.Render();
+            testModel.Draw(camera, shader);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using OpenGL;
 using OpenGL.CoreUI;
+using Quincy.DebugUtils;
 using System;
+using System.Runtime.InteropServices;
 
 namespace Quincy
 {
@@ -10,6 +12,8 @@ namespace Quincy
         protected NativeWindow window;
 
         public bool isRunning = true;
+        private Scene scene;
+        private Gl.DebugProc debugProc;
         #endregion
 
         #region Methods
@@ -19,6 +23,7 @@ namespace Quincy
             
             window.Render += Render;
             window.Close += Closing;
+            window.ContextCreated += ContextCreated;
             window.ContextDestroying += ContextDestroyed;
 
             window.Animation = false;
@@ -33,12 +38,27 @@ namespace Quincy
             window.Run();
         }
 
+        private void ContextCreated(object sender, NativeWindowEventArgs e)
+        {
+            debugProc = GlDebugCallback;
+            Gl.DebugMessageCallback(debugProc, null);
+            Gl.Enable(EnableCap.DepthTest);
+            scene = new Scene();
+        }
+
+        private void GlDebugCallback(DebugSource source, DebugType type, uint id, DebugSeverity severity, int length, IntPtr message, IntPtr userParam)
+        {
+            var messageStr = Marshal.PtrToStringAnsi(message, length);
+            Logging.Log($"{type}: {id} {messageStr}");
+        }
+
         public void RenderImGui() { }
 
         private void Render(object sender, NativeWindowEventArgs e)
         {
             Gl.ClearColor(100/255f, 149/255f, 237/255f, 1.0f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            scene.Render();
         }
 
         public void Close()

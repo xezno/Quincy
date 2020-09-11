@@ -1,27 +1,9 @@
 ﻿using OpenGL;
-using Quincy.MathUtils;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Quincy
 {
-    [StructLayout(LayoutKind.Sequential)]
-    unsafe struct Vertex
-    {
-        public Vector3f Position { get; set; }
-        public Vector3f Normal { get; set; }
-        public Vector2f TexCoords { get; set; }
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    struct Texture
-    {
-        public uint Id { get; set; }
-        public string Type { get; set; }
-    }
-
     class Mesh
     {
         public List<Vertex> Vertices { get; set; }
@@ -30,25 +12,50 @@ namespace Quincy
 
         private uint vao, vbo, ebo;
 
-        public Mesh(List<Vertex> vertices, List<uint> indices, List<Texture> textures)
+        private int rotation;
+        private int Rotation { get => rotation; set => rotation = value % 360; }
+
+        public Matrix4x4f ModelMatrix;
+
+        public Mesh(List<Vertex> vertices, List<uint> indices, List<Texture> textures, Matrix4x4f modelMatrix)
         {
             Vertices = vertices;
             Indices = indices;
             Textures = textures;
+            ModelMatrix = modelMatrix;
+
+            SetupMesh();
         }
 
         private void SetupMesh()
         {
-            var vertexStructSize = Marshal.SizeOf(typeof(Vertex));
+            var vertexStructSize = 8 * sizeof(float);
 
             vao = Gl.GenVertexArray();
+            Gl.BindVertexArray(vao);
+
             vbo = Gl.GenBuffer();
             ebo = Gl.GenBuffer();
 
-            Gl.BindVertexArray(vao);
-            Gl.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            var glVertices = new List<float>();
+            foreach (var vertex in Vertices)
+            {
+                glVertices.AddRange(new[] { 
+                    vertex.Position.x,
+                    vertex.Position.y,
+                    vertex.Position.z,
 
-            Gl.BufferData(BufferTarget.ArrayBuffer, (uint)Vertices.Count * (uint)vertexStructSize, Vertices.ToArray(), BufferUsage.StaticDraw);
+                    vertex.Normal.x,
+                    vertex.Normal.y,
+                    vertex.Normal.z,
+
+                    vertex.TexCoords.x,
+                    vertex.TexCoords.y
+                });
+            }
+            
+            Gl.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            Gl.BufferData(BufferTarget.ArrayBuffer, (uint)glVertices.Count * sizeof(float), glVertices.ToArray(), BufferUsage.StaticDraw);
 
             Gl.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
             Gl.BufferData(BufferTarget.ElementArrayBuffer, (uint)Indices.Count * sizeof(uint), Indices.ToArray(), BufferUsage.StaticDraw);
@@ -60,14 +67,16 @@ namespace Quincy
             Gl.VertexAttribPointer(1, 3, VertexAttribType.Float, false, vertexStructSize, (IntPtr)(3 * sizeof(float)));
 
             Gl.EnableVertexAttribArray(2);
-            Gl.VertexAttribPointer(2, 2, VertexAttribType.Float, false, vertexStructSize, (IntPtr)(5 * sizeof(float)));
+            Gl.VertexAttribPointer(2, 2, VertexAttribType.Float, false, vertexStructSize, (IntPtr)(6 * sizeof(float)));
 
             Gl.BindVertexArray(0);
         }
 
-        public void Draw(Shader shader)
+        public void Draw(Camera camera, Shader shader)
         {
             uint diffuseCount = 0, specularCount = 0;
+
+            shader.Use();
 
             for (int i = 0; i < Textures.Count; ++i)
             {
@@ -88,9 +97,22 @@ namespace Quincy
                     number = (++specularCount).ToString();
                 }
 
-                shader.SetFloat($"material.{name}{number}", i);
+                shader.SetInt($"material.{name}{number}", i);
                 Gl.BindTexture(TextureTarget.Texture2d, texture.Id);
             }
+
+            var tmpModelMatrix = ModelMatrix;
+            tmpModelMatrix.RotateY(Rotation++);
+
+            shader.SetMatrix("projectionMatrix", camera.ProjMatrix);
+            shader.SetMatrix("viewMatrix", camera.ViewMatrix);
+            shader.SetMatrix("modelMatrix", tmpModelMatrix);
+
+            Gl.ActiveTexture(TextureUnit.Texture0);
+
+            Gl.BindVertexArray(vao);
+            Gl.DrawElements(PrimitiveType.Triangles, Indices.Count, DrawElementsType.UnsignedInt, IntPtr.Zero);
+            Gl.BindVertexArray(0);
         }
     }
 }

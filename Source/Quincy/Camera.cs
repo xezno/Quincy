@@ -6,7 +6,7 @@ namespace Quincy
 {
     class Camera
     {
-        public Vector3f Position { get; set; }
+        public Vector3f Position { get; set; } = new Vector3f(0, 5f, 15f);
         public Vector3f Rotation { get; set; }
 
         public float FieldOfView { get; set; } = 90f;
@@ -21,9 +21,10 @@ namespace Quincy
 
         public Camera()
         {
-            ProjMatrix = CreateInfReversedZProj(FieldOfView,
+            ProjMatrix = Matrix4x4f.Perspective(FieldOfView,
                 1280f / 720f,
-                NearPlane);
+                NearPlane,
+                FarPlane);
         }
 
         private Matrix4x4f CreateInfReversedZProj(float fov, float aspectRatio, float nearPlane)
@@ -41,7 +42,7 @@ namespace Quincy
             viewMatrix.RotateX(Rotation.x);
             viewMatrix.RotateY(Rotation.y);
             viewMatrix.RotateZ(Rotation.z);
-            viewMatrix *= Matrix4x4f.LookAtDirection(new Vertex3f(Position.x, Position.y, Position.z), new Vertex3f(0f, 0f, -1f), new Vertex3f(0f, 1f, 0f));
+            viewMatrix *= Matrix4x4f.LookAt(new Vertex3f(Position.x, Position.y, Position.z), new Vertex3f(0f, 0f, 0f), new Vertex3f(0f, 1f, 0f));
         }
     }
 }
