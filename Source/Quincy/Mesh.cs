@@ -74,7 +74,7 @@ namespace Quincy
 
         public void Draw(Camera camera, Shader shader, Light light)
         {
-            uint diffuseCount = 0, specularCount = 0;
+            Dictionary<string, uint> counts = new Dictionary<string, uint>();
 
             shader.Use();
 
@@ -83,19 +83,12 @@ namespace Quincy
                 var texture = Textures[i];
 
                 Gl.ActiveTexture(TextureUnit.Texture0 + i);
-
-                string number = "";
                 string name = texture.Type;
 
-                // TODO: Make type an enum
-                if (name == "texture_diffuse")
-                {
-                    number = (++diffuseCount).ToString();
-                }
-                else if (name == "texture_specular")
-                {
-                    number = (++specularCount).ToString();
-                }
+                if (!counts.ContainsKey(name))
+                    counts.Add(name, 0);
+
+                string number = (++counts[name]).ToString();
 
                 shader.SetInt($"material.{name}{number}", i);
                 Gl.BindTexture(TextureTarget.Texture2d, texture.Id);

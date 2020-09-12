@@ -20,20 +20,19 @@ float CalcShadows(vec4 fragPos)
     vec3 projectedCoords = fragPos.xyz / fragPos.w;
     projectedCoords = projectedCoords * 0.5 + 0.5;
 
-    float closestDepth = texture(shadowMap, projectedCoords.xy).r;
     float currentDepth = projectedCoords.z;
 
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-    for (int x = -1; x <= 1; ++x)
+    for (int x = -2; x <= 2; ++x)
     { 
-        for (int y = -1; y <= 1; ++y)
+        for (int y = -2; y <= 2; ++y)
         {
             float pcfDepth = texture(shadowMap, projectedCoords.xy + vec2(x, y) * texelSize).r;
             shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
         }
     }
-    shadow /= 9.0;
+    shadow /= 25.0;
 
     if (projectedCoords.z > 1.0)
         shadow = 0.0;
@@ -42,6 +41,6 @@ float CalcShadows(vec4 fragPos)
 }
 
 void main() {
-    vec4 textureValue = mix(texture(material.texture_diffuse1, outTexCoords), texture(material.texture_diffuse2, outTexCoords), 0.5);
+    vec4 textureValue = texture(material.texture_diffuse1, outTexCoords);
     fragColor = textureValue - (CalcShadows(fragPosLightSpace) * 0.25);
 }

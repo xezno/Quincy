@@ -1,6 +1,7 @@
 ﻿using OpenGL;
 using Quincy.DebugUtils;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -8,6 +9,7 @@ namespace Quincy
 {
     class Shader
     {
+        private List<string> knownMissingVariables = new List<string>();
         public uint Id { get; set; }
 
         public Shader(string fragGlslPath, string vertGlslPath)
@@ -70,7 +72,11 @@ namespace Quincy
             loc = Gl.GetUniformLocation(Id, name);
             if (loc < 0)
             {
+                if (knownMissingVariables.Contains(name))
+                    return false;
+
                 Logging.Log($"No variable {name}", Logging.Severity.Medium);
+                knownMissingVariables.Add(name);
                 return false;
             }
 

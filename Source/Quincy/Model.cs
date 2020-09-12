@@ -108,6 +108,15 @@ namespace Quincy
                 
                 var specularMaps = LoadMaterialTextures(material, TextureType.Specular, "texture_specular");
                 textures.AddRange(specularMaps);
+                
+                var normalMaps = LoadMaterialTextures(material, TextureType.Normals, "texture_normal");
+                textures.AddRange(normalMaps);
+                
+                var emissiveMaps = LoadMaterialTextures(material, TextureType.Emissive, "texture_emissive");
+                textures.AddRange(emissiveMaps);
+                
+                var unknownMaps = LoadMaterialTextures(material, TextureType.Unknown, "texture_unknown"); // includes roughness
+                textures.AddRange(unknownMaps);
             }
 
             var oglTransform = new Matrix4x4f(
