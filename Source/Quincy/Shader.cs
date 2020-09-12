@@ -1,5 +1,6 @@
 ﻿using OpenGL;
 using Quincy.DebugUtils;
+using Quincy.MathUtils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -59,11 +60,19 @@ namespace Quincy
             }
         }
 
-        internal void SetMatrix(string name, Matrix4x4f value)
+        public void SetMatrix(string name, Matrix4x4f value)
         {
             if (GetUniformLocation(name, out int loc))
             {
                 Gl.ProgramUniformMatrix4f(Id, loc, 1, false, value);
+            }
+        }
+
+        public void SetVector3(string name, Vector3f value)
+        {
+            if (GetUniformLocation(name, out int loc))
+            {
+                Gl.ProgramUniform3(Id, loc, value.x, value.y, value.z);
             }
         }
 

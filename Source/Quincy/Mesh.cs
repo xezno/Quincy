@@ -100,9 +100,16 @@ namespace Quincy
             shader.SetMatrix("projectionMatrix", camera.ProjMatrix);
             shader.SetMatrix("viewMatrix", camera.ViewMatrix);
             shader.SetMatrix("modelMatrix", tmpModelMatrix);
+
+            shader.SetVector3("camPos", camera.Position);
+            shader.SetVector3("lightPos", light.Position);
             
             shader.SetMatrix("lightProjectionMatrix", light.ProjMatrix);
             shader.SetMatrix("lightViewMatrix", light.ViewMatrix);
+
+            shader.SetFloat("metallic", 1.0f);
+            shader.SetFloat("roughness", 0.5f);
+            shader.SetFloat("ao", 0.2f);
             
             Gl.ActiveTexture(TextureUnit.Texture0 + Textures.Count);
             Gl.BindTexture(TextureTarget.Texture2d, light.ShadowMap.DepthMap);

@@ -13,10 +13,10 @@ namespace Quincy
         public Scene()
         {
             testModel = new Model("Content/Models/vtech/scene.gltf");
-            shader = new Shader("Content/Shaders/frag.glsl", "Content/Shaders/vert.glsl");
+            shader = new Shader("Content/Shaders/PBR/pbr.frag", "Content/Shaders/PBR/pbr.vert");
             depthShader = new Shader("Content/Shaders/Depth/depth.frag", "Content/Shaders/Depth/depth.vert");
             camera = new Camera();
-            light = new Light(position: new Vector3f(-5f, 5f, 0f));
+            light = new Light(position: new Vector3f(0f, 10f, 0f));
         }
 
         public void Render()

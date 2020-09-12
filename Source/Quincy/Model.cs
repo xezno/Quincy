@@ -43,7 +43,10 @@ namespace Quincy
         private void LoadModel(string path)
         {
             var importer = new AssimpContext();
-            var scene = importer.ImportFile(path, PostProcessSteps.Triangulate | PostProcessSteps.PreTransformVertices | PostProcessSteps.RemoveRedundantMaterials);
+            var scene = importer.ImportFile(path, PostProcessSteps.Triangulate | 
+                                                  PostProcessSteps.PreTransformVertices | 
+                                                  PostProcessSteps.RemoveRedundantMaterials | 
+                                                  PostProcessSteps.CalculateTangentSpace);
 
             directory = Path.GetDirectoryName(path);
 
