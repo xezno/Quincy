@@ -24,18 +24,26 @@ namespace Quincy
             LoadModel(path);
         }
 
-        public void Draw(Camera camera, Shader shader)
+        public void Draw(Camera camera, Shader shader, Light light)
         {
             foreach (var mesh in meshes)
             {
-                mesh.Draw(camera, shader);
+                mesh.Draw(camera, shader, light);
+            }
+        }
+
+        public void DrawShadows(Light light, Shader shader)
+        {
+            foreach (var mesh in meshes)
+            {
+                mesh.DrawShadows(light, shader);
             }
         }
 
         private void LoadModel(string path)
         {
             var importer = new AssimpContext();
-            var scene = importer.ImportFile(path, PostProcessSteps.Triangulate | PostProcessSteps.PreTransformVertices);
+            var scene = importer.ImportFile(path, PostProcessSteps.Triangulate | PostProcessSteps.PreTransformVertices | PostProcessSteps.RemoveRedundantMaterials);
 
             directory = Path.GetDirectoryName(path);
 

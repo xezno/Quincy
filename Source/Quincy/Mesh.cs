@@ -72,7 +72,7 @@ namespace Quincy
             Gl.BindVertexArray(0);
         }
 
-        public void Draw(Camera camera, Shader shader)
+        public void Draw(Camera camera, Shader shader, Light light)
         {
             uint diffuseCount = 0, specularCount = 0;
 
@@ -107,6 +107,31 @@ namespace Quincy
             shader.SetMatrix("projectionMatrix", camera.ProjMatrix);
             shader.SetMatrix("viewMatrix", camera.ViewMatrix);
             shader.SetMatrix("modelMatrix", tmpModelMatrix);
+            
+            shader.SetMatrix("lightProjectionMatrix", light.ProjMatrix);
+            shader.SetMatrix("lightViewMatrix", light.ViewMatrix);
+            
+            Gl.ActiveTexture(TextureUnit.Texture0 + Textures.Count);
+            Gl.BindTexture(TextureTarget.Texture2d, light.ShadowMap.DepthMap);
+            shader.SetInt("shadowMap", Textures.Count);
+
+            Gl.ActiveTexture(TextureUnit.Texture0);
+
+            Gl.BindVertexArray(vao);
+            Gl.DrawElements(PrimitiveType.Triangles, Indices.Count, DrawElementsType.UnsignedInt, IntPtr.Zero);
+            Gl.BindVertexArray(0);
+        }
+
+        public void DrawShadows(Light light, Shader depthShader)
+        {
+            depthShader.Use();
+
+            var tmpModelMatrix = ModelMatrix;
+            tmpModelMatrix.RotateY(Rotation++);
+
+            depthShader.SetMatrix("projectionMatrix", light.ProjMatrix);
+            depthShader.SetMatrix("viewMatrix", light.ViewMatrix);
+            depthShader.SetMatrix("modelMatrix", tmpModelMatrix);
 
             Gl.ActiveTexture(TextureUnit.Texture0);
 

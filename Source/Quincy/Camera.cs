@@ -6,7 +6,7 @@ namespace Quincy
 {
     class Camera
     {
-        public Vector3f Position { get; set; } = new Vector3f(0, 5f, 15f);
+        public Vector3f Position { get; set; } = new Vector3f(0, 5f, 10f);
         public Vector3f Rotation { get; set; }
 
         public float FieldOfView { get; set; } = 90f;

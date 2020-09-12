@@ -54,11 +54,20 @@ namespace Quincy
 
         public void RenderImGui() { }
 
+        private void RenderToScreen()
+        {
+            scene.Render();
+        }
+
+        private void RenderToShadowMap()
+        {
+            scene.RenderShadows();
+        }
+
         private void Render(object sender, NativeWindowEventArgs e)
         {
-            Gl.ClearColor(100/255f, 149/255f, 237/255f, 1.0f);
-            Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            scene.Render();
+            RenderToShadowMap();
+            RenderToScreen();
         }
 
         public void Close()
