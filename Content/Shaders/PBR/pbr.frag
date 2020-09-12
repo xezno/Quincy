@@ -1,10 +1,16 @@
 #version 450
 const float PI = 3.14159265359;
 
-in vec2 outTexCoords;
-in vec4 fragPosLightSpace;
-in vec3 outNormal;
-in vec3 worldPos;
+in VS_OUT {
+    vec2 texCoords;
+    vec3 normal;
+    vec3 worldPos;
+    vec4 fragPosLightSpace;
+
+    vec3 tangentLightPos;
+    vec3 tangentCamPos;
+    vec3 tangentWorldPos;
+} vs_out;
 
 out vec4 fragColor;
 
@@ -12,19 +18,15 @@ struct Material {
     sampler2D texture_diffuse1;
     sampler2D texture_diffuse2;
 
-    sampler2D texture_roughness1;
+    sampler2D texture_emissive1;
+
+    sampler2D texture_unknown1;
 
     sampler2D texture_normal1;
 };
 
 uniform Material material;
 uniform sampler2D shadowMap;
-uniform vec3 camPos;
-uniform vec3 lightPos;
-uniform float roughness;
-
-uniform float metallic;
-uniform float ao;
 
 // Shadow mapping
 float CalcShadows(vec4 fragPos)
@@ -38,15 +40,15 @@ float CalcShadows(vec4 fragPos)
 
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-    for (int x = -2; x <= 2; ++x)
+    for (int x = -2; x <= 1; ++x)
     { 
-        for (int y = -2; y <= 2; ++y)
+        for (int y = -2; y <= 1; ++y)
         {
             float pcfDepth = texture(shadowMap, projectedCoords.xy + vec2(x, y) * texelSize).r;
             shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
         }
     }
-    shadow /= 25.0;
+    shadow /= 16.0;
 
     if (projectedCoords.z > 1.0)
         shadow = 0.0;
@@ -93,23 +95,26 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
 }
 
 void main() {
-    vec3 albedo = texture(material.texture_diffuse1, outTexCoords).xyz;
-    // float roughness = texture(material.texture_roughness1, outTexCoords).x;
+    vec4 albedoSrc = texture(material.texture_diffuse1, vs_out.texCoords);
+    vec3 albedo = albedoSrc.xyz;
+    float ao = texture(material.texture_unknown1, vs_out.texCoords).x;
+    float roughness = texture(material.texture_unknown1, vs_out.texCoords).y;
+    float metallic = texture(material.texture_unknown1, vs_out.texCoords).z;
 
-    // vec3 normal = texture(material.texture_normal1, outTexCoords).xyz;
-    // normal = normalize(normal * 2.0 - 1.0);
+    vec3 normal = texture(material.texture_normal1, vs_out.texCoords).xyz;
+    normal = normalize(normal * 2.0 - 1.0);
 
-    vec3 N = normalize(outNormal);
-    vec3 V = normalize(camPos - worldPos);
+    vec3 N = normalize(normal);
+    vec3 V = normalize(vs_out.tangentCamPos - vs_out.tangentWorldPos);
     
     vec3 F0 = vec3(0.04); 
     F0 = mix(F0, albedo, metallic);
 
     vec3 Lo = vec3(0.0);
-    vec3 L = normalize(lightPos - worldPos);
+    vec3 L = normalize(vs_out.tangentLightPos - vs_out.tangentWorldPos);
     vec3 H = normalize(V + L);
-    float distance = length(lightPos - worldPos);
-    float attenuation = 10.0 / (distance * distance); // *10
+    float distance = length(vs_out.tangentLightPos - vs_out.tangentWorldPos);
+    float attenuation = 1.0 / (distance * distance);
     vec3 radiance = vec3(1.0, 1.0, 1.0) * attenuation;
 
     float NDF = DistributionGGX(N, H, roughness);
@@ -131,7 +136,13 @@ void main() {
     vec3 color = ambient + Lo;
 
     color = color / (color + vec3(1.0));
-    color = pow(color, vec3(1.0 / 2.2));
+    // color = pow(color, vec3(1.0 / 2.2));
+    color = pow(color, vec3(1.0 / 3.1));
 
-    fragColor = vec4(color - (CalcShadows(fragPosLightSpace) * 0.25), 1.0);
+    vec4 emissive = texture(material.texture_emissive1, vs_out.texCoords);
+    // color += emissive.xyz;
+
+    fragColor = vec4(color - (CalcShadows(vs_out.fragPosLightSpace) * 0.03), albedoSrc.w);
+
+    // fragColor = vec4(vec3(1.0 - CalcShadows(vs_out.fragPosLightSpace)), 1.0);
 }

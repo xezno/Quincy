@@ -6,10 +6,12 @@ namespace Quincy
 {
     class Camera
     {
-        public Vector3f Position { get; set; } = new Vector3f(0, 5f, 10f);
+        public Vector3f Position { get; set; } = new Vector3f(0, 7.5f, 10f);
         public Vector3f Rotation { get; set; }
 
-        public float FieldOfView { get; set; } = 90f;
+        private float angle;
+
+        public float FieldOfView { get; set; } = 70f;
         public float NearPlane { get; set; } = 0.1f;
         public float FarPlane { get; set; } = 2500f;
 
@@ -37,12 +39,21 @@ namespace Quincy
         }
 
         public void Render()
+        { }
+
+        public void Update(float deltaTime)
         {
             viewMatrix = Matrix4x4f.Identity;
-            viewMatrix.RotateX(Rotation.x);
-            viewMatrix.RotateY(Rotation.y);
-            viewMatrix.RotateZ(Rotation.z);
-            viewMatrix *= Matrix4x4f.LookAt(new Vertex3f(Position.x, Position.y, Position.z), new Vertex3f(0f, 0f, 0f), new Vertex3f(0f, 1f, 0f));
+
+            var position = new Vertex3f();
+            position.x = MathF.Cos(angle) * 10f;
+            position.y = 10f;
+            position.z = MathF.Sin(angle) * 10f;
+
+            angle += deltaTime;
+            angle %= 360;
+
+            viewMatrix *= Matrix4x4f.LookAt(position, new Vertex3f(0f, 0f, 0f), new Vertex3f(0f, 1f, 0f));
         }
     }
 }

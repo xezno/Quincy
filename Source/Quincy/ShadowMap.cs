@@ -1,4 +1,5 @@
 ﻿using OpenGL;
+using Quincy.MathUtils;
 using System;
 
 namespace Quincy
@@ -8,8 +9,12 @@ namespace Quincy
         public uint DepthMapFbo { get; private set; }
         public uint DepthMap { get; private set; }
 
+        public Vector2f Resolution { get; }
+
         public ShadowMap(int width, int height)
         {
+            Resolution = new Vector2f(width, height);
+
             DepthMap = Gl.GenTexture();
             DepthMapFbo = Gl.GenFramebuffer();
 
@@ -18,8 +23,8 @@ namespace Quincy
             Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
             Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
 
-            Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureBorderColor, new[] { 1.0f, 1.0f, 1.0f, 1.0f });
-            Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
+            // Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureBorderColor, new[] { 1.0f, 1.0f, 1.0f, 1.0f });
+            Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
             Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
 
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, DepthMapFbo);

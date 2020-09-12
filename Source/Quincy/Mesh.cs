@@ -12,9 +12,6 @@ namespace Quincy
 
         private uint vao, vbo, ebo;
 
-        private int rotation;
-        private int Rotation { get => rotation; set => rotation = value % 360; }
-
         public Matrix4x4f ModelMatrix;
 
         public Mesh(List<Vertex> vertices, List<uint> indices, List<Texture> textures, Matrix4x4f modelMatrix)
@@ -29,7 +26,7 @@ namespace Quincy
 
         private void SetupMesh()
         {
-            var vertexStructSize = 8 * sizeof(float);
+            var vertexStructSize = 14 * sizeof(float);
 
             vao = Gl.GenVertexArray();
             Gl.BindVertexArray(vao);
@@ -49,6 +46,14 @@ namespace Quincy
                     vertex.Normal.y,
                     vertex.Normal.z,
 
+                    vertex.Tangent.x,
+                    vertex.Tangent.y,
+                    vertex.Tangent.z,
+
+                    vertex.BiTangent.x,
+                    vertex.BiTangent.y,
+                    vertex.BiTangent.z,
+
                     vertex.TexCoords.x,
                     vertex.TexCoords.y
                 });
@@ -67,7 +72,13 @@ namespace Quincy
             Gl.VertexAttribPointer(1, 3, VertexAttribType.Float, false, vertexStructSize, (IntPtr)(3 * sizeof(float)));
 
             Gl.EnableVertexAttribArray(2);
-            Gl.VertexAttribPointer(2, 2, VertexAttribType.Float, false, vertexStructSize, (IntPtr)(6 * sizeof(float)));
+            Gl.VertexAttribPointer(2, 3, VertexAttribType.Float, false, vertexStructSize, (IntPtr)(6 * sizeof(float)));
+
+            Gl.EnableVertexAttribArray(3);
+            Gl.VertexAttribPointer(3, 3, VertexAttribType.Float, false, vertexStructSize, (IntPtr)(9 * sizeof(float)));
+
+            Gl.EnableVertexAttribArray(4);
+            Gl.VertexAttribPointer(4, 2, VertexAttribType.Float, false, vertexStructSize, (IntPtr)(12 * sizeof(float)));
 
             Gl.BindVertexArray(0);
         }
@@ -94,22 +105,15 @@ namespace Quincy
                 Gl.BindTexture(TextureTarget.Texture2d, texture.Id);
             }
 
-            var tmpModelMatrix = ModelMatrix;
-            tmpModelMatrix.RotateY(Rotation++);
-
             shader.SetMatrix("projectionMatrix", camera.ProjMatrix);
             shader.SetMatrix("viewMatrix", camera.ViewMatrix);
-            shader.SetMatrix("modelMatrix", tmpModelMatrix);
+            shader.SetMatrix("modelMatrix", ModelMatrix);
 
             shader.SetVector3("camPos", camera.Position);
             shader.SetVector3("lightPos", light.Position);
             
             shader.SetMatrix("lightProjectionMatrix", light.ProjMatrix);
             shader.SetMatrix("lightViewMatrix", light.ViewMatrix);
-
-            shader.SetFloat("metallic", 1.0f);
-            shader.SetFloat("roughness", 0.5f);
-            shader.SetFloat("ao", 0.2f);
             
             Gl.ActiveTexture(TextureUnit.Texture0 + Textures.Count);
             Gl.BindTexture(TextureTarget.Texture2d, light.ShadowMap.DepthMap);
@@ -126,18 +130,22 @@ namespace Quincy
         {
             depthShader.Use();
 
-            var tmpModelMatrix = ModelMatrix;
-            tmpModelMatrix.RotateY(Rotation++);
-
             depthShader.SetMatrix("projectionMatrix", light.ProjMatrix);
             depthShader.SetMatrix("viewMatrix", light.ViewMatrix);
-            depthShader.SetMatrix("modelMatrix", tmpModelMatrix);
+            depthShader.SetMatrix("modelMatrix", ModelMatrix);
 
             Gl.ActiveTexture(TextureUnit.Texture0);
 
             Gl.BindVertexArray(vao);
             Gl.DrawElements(PrimitiveType.Triangles, Indices.Count, DrawElementsType.UnsignedInt, IntPtr.Zero);
             Gl.BindVertexArray(0);
+        }
+
+        public void Update(float deltaTime)
+        {
+            ModelMatrix = Matrix4x4f.Identity;
+            var scale = 0.015f;
+            ModelMatrix.Scale(scale, scale, scale);
         }
     }
 }

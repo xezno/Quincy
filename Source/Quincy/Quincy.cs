@@ -30,6 +30,7 @@ namespace Quincy
             window.CursorVisible = true;
             window.DepthBits = 24;
             window.SwapInterval = 0;
+            window.MultisampleBits = 16;
 
             window.Create(128, 128, (uint)windowResX + 16, (uint)windowResY + 16, NativeWindowStyles.Caption | NativeWindowStyles.Border);
             window.Caption = windowTitle;
@@ -43,6 +44,9 @@ namespace Quincy
             debugProc = GlDebugCallback;
             Gl.DebugMessageCallback(debugProc, null);
             Gl.Enable(EnableCap.DepthTest);
+            Gl.Enable(EnableCap.Blend);
+            Gl.Enable(EnableCap.CullFace);
+            Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             scene = new Scene();
         }
 
@@ -61,7 +65,9 @@ namespace Quincy
 
         private void RenderToShadowMap()
         {
+            Gl.CullFace(CullFaceMode.Front);
             scene.RenderShadows();
+            Gl.CullFace(CullFaceMode.Back);
         }
 
         private void Render(object sender, NativeWindowEventArgs e)

@@ -1,5 +1,6 @@
 ﻿using OpenGL;
 using Quincy.MathUtils;
+using System;
 
 namespace Quincy
 {
@@ -10,19 +11,24 @@ namespace Quincy
         private Camera camera;
         private Light light;
 
+        private DateTime lastUpdate;
+
         public Scene()
         {
-            testModel = new Model("Content/Models/vtech/scene.gltf");
+            testModel = new Model("Content/Models/mcrn_tachi/scene.gltf");
             shader = new Shader("Content/Shaders/PBR/pbr.frag", "Content/Shaders/PBR/pbr.vert");
             depthShader = new Shader("Content/Shaders/Depth/depth.frag", "Content/Shaders/Depth/depth.vert");
             camera = new Camera();
-            light = new Light(position: new Vector3f(0f, 10f, 0f));
+            light = new Light(position: new Vector3f(0f, -5f, 50f));
         }
 
         public void Render()
         {
+            Update();
+
             Gl.Viewport(0, 0, 1280, 720);
-            Gl.ClearColor(100/255f, 149/255f, 237/255f, 1.0f);
+            // Gl.ClearColor(100/255f, 149/255f, 237/255f, 1.0f);
+            Gl.ClearColor(1f, 1f, 1f, 1f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             camera.Render();
             testModel.Draw(camera, shader, light);
@@ -30,7 +36,7 @@ namespace Quincy
 
         public void RenderShadows()
         {
-            Gl.Viewport(0, 0, 1024, 1024);
+            Gl.Viewport(0, 0, (int)light.ShadowMap.Resolution.x, (int)light.ShadowMap.Resolution.y);
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, light.ShadowMap.DepthMapFbo);
             Gl.Clear(ClearBufferMask.DepthBufferBit);
             
@@ -38,6 +44,15 @@ namespace Quincy
             testModel.DrawShadows(light, depthShader);
             
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        }
+
+        public void Update()
+        {
+            float deltaTime = (float)(DateTime.Now - lastUpdate).TotalSeconds;
+            testModel.Update(deltaTime);
+            camera.Update(deltaTime);
+
+            lastUpdate = DateTime.Now;
         }
     }
 }

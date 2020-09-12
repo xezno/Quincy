@@ -40,14 +40,32 @@ namespace Quincy
             }
         }
 
+        public void Update(float deltaTime)
+        {
+            foreach (var mesh in meshes)
+            {
+                mesh.Update(deltaTime);
+            }
+        }
+
         private void LoadModel(string path)
         {
             var importer = new AssimpContext();
+
+            var logStream = new LogStream((msg, userData) =>
+            {
+                Logging.Log($"{msg}");
+            });
+            logStream.Attach();
+
             var scene = importer.ImportFile(path, PostProcessSteps.Triangulate | 
                                                   PostProcessSteps.PreTransformVertices | 
                                                   PostProcessSteps.RemoveRedundantMaterials | 
-                                                  PostProcessSteps.CalculateTangentSpace);
-
+                                                  PostProcessSteps.CalculateTangentSpace |
+                                                  PostProcessSteps.OptimizeMeshes |
+                                                  PostProcessSteps.OptimizeGraph | 
+                                                  PostProcessSteps.ValidateDataStructure);
+            
             directory = Path.GetDirectoryName(path);
 
             ProcessNode(scene.RootNode, scene);
@@ -89,6 +107,12 @@ namespace Quincy
                 else
                 {
                     vertex.TexCoords = new Vector2f(0, 0);
+                }
+
+                if (mesh.HasTangentBasis)
+                {
+                    vertex.Tangent = new Vector3f(mesh.Tangents[i].X, mesh.Tangents[i].Y, mesh.Tangents[i].Z);
+                    vertex.BiTangent = new Vector3f(mesh.BiTangents[i].X, mesh.BiTangents[i].Y, mesh.BiTangents[i].Z);
                 }
 
                 vertices.Add(vertex);
@@ -145,7 +169,7 @@ namespace Quincy
 
                 var texture = new Texture()
                 {
-                    Id = TextureFromFile(textureSlot.FilePath, directory),
+                    Id = TextureFromFile(textureSlot.FilePath, directory, typeName),
                     Type = typeName,
                     Path = $"{directory}/{textureSlot.FilePath}"
                 };
@@ -158,7 +182,7 @@ namespace Quincy
             return textures;
         }
 
-        private uint TextureFromFile(string fileName, string directory)
+        private uint TextureFromFile(string fileName, string directory, string typeName)
         {
             // Check if already loaded
             if (TextureContainer.Textures.Any(t => t.Path == $"{directory}/{fileName}"))
@@ -186,7 +210,11 @@ namespace Quincy
             var textureDataPtr = Marshal.AllocHGlobal(textureData.Length);
             Marshal.Copy(textureData, 0, textureDataPtr, textureData.Length);
 
-            Gl.TexImage2D(TextureTarget.Texture2d, 0, InternalFormat.Rgba, image.Width, image.Height - 1/* fixes black pixel row*/, 0, imageFormat, PixelType.UnsignedByte, textureDataPtr);
+            var internalFormat = InternalFormat.Rgba;
+            if (typeName == "texture_diffuse")
+                internalFormat = InternalFormat.SrgbAlpha;
+
+            Gl.TexImage2D(TextureTarget.Texture2d, 0, internalFormat, image.Width, image.Height - 1/* fixes black pixel row*/, 0, imageFormat, PixelType.UnsignedByte, textureDataPtr);
             Gl.GenerateMipmap(TextureTarget.Texture2d);
 
             image.Dispose();
