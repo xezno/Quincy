@@ -3,10 +3,9 @@ using Assimp.Unmanaged;
 using OpenGL;
 using Quincy.DebugUtils;
 using Quincy.MathUtils;
+using StbiSharp;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -64,7 +63,9 @@ namespace Quincy
                                                   PostProcessSteps.CalculateTangentSpace |
                                                   PostProcessSteps.OptimizeMeshes |
                                                   PostProcessSteps.OptimizeGraph | 
-                                                  PostProcessSteps.ValidateDataStructure);
+                                                  PostProcessSteps.ValidateDataStructure |
+                                                  PostProcessSteps.GenerateNormals |
+                                                  PostProcessSteps.FlipUVs);
             
             directory = Path.GetDirectoryName(path);
 
@@ -167,12 +168,9 @@ namespace Quincy
                 if (string.IsNullOrEmpty(textureSlot.FilePath))
                     continue;
 
-                var texture = new Texture()
-                {
-                    Id = TextureFromFile(textureSlot.FilePath, directory, typeName),
-                    Type = typeName,
-                    Path = $"{directory}/{textureSlot.FilePath}"
-                };
+                Logging.Log($"Loading {directory}/{textureSlot.FilePath} as {typeName}");
+
+                var texture = Texture.LoadFromFile($"{directory}/{textureSlot.FilePath}", typeName);
 
                 // Add to texture container so that we don't reload it later
                 TextureContainer.Textures.Add(texture);
@@ -180,50 +178,6 @@ namespace Quincy
             }
 
             return textures;
-        }
-
-        private uint TextureFromFile(string fileName, string directory, string typeName)
-        {
-            // Check if already loaded
-            if (TextureContainer.Textures.Any(t => t.Path == $"{directory}/{fileName}"))
-            {
-                // Already loaded, we'll just use that
-                return TextureContainer.Textures.First(t => t.Path == $"{directory}/{fileName}").Id;
-            }
-
-            // Not loaded, load from scratch
-            var texturePtr = Gl.GenTexture();
-            Gl.BindTexture(TextureTarget.Texture2d, texturePtr);
-            using var textureStream = new MemoryStream();
-            var image = Image.FromFile($"{directory}/{fileName}");
-
-            var imageFormat = OpenGL.PixelFormat.Bgra;
-            if (image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format24bppRgb ||
-                image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format32bppRgb)
-                imageFormat = OpenGL.PixelFormat.Bgr;
-
-            image.Save(textureStream, ImageFormat.Bmp);
-
-            var textureData = new byte[textureStream.Length];
-            textureStream.Read(textureData, 0, (int)textureStream.Length);
-
-            var textureDataPtr = Marshal.AllocHGlobal(textureData.Length);
-            Marshal.Copy(textureData, 0, textureDataPtr, textureData.Length);
-
-            var internalFormat = InternalFormat.Rgba;
-            if (typeName == "texture_diffuse")
-                internalFormat = InternalFormat.SrgbAlpha;
-
-            Gl.TexImage2D(TextureTarget.Texture2d, 0, internalFormat, image.Width, image.Height - 1/* fixes black pixel row*/, 0, imageFormat, PixelType.UnsignedByte, textureDataPtr);
-            Gl.GenerateMipmap(TextureTarget.Texture2d);
-
-            image.Dispose();
-            Marshal.FreeHGlobal(textureDataPtr);
-
-            Logging.Log($"Loaded texture {fileName} ({directory}), ptr {texturePtr}");
-            Gl.BindTexture(TextureTarget.Texture2d, 0);
-
-            return texturePtr;
         }
     }
 }

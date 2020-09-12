@@ -24,7 +24,8 @@
 
   <ItemGroup>
     <PackageReference Include="AssimpNet" Version="4.1.0" />
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="ImGui.NET" Version="1.78.0" />
+    <PackageReference Include="StbiSharp" Version="1.0.12" />
   </ItemGroup>
 
   <ItemGroup>

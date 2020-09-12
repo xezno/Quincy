@@ -31,7 +31,7 @@ uniform sampler2D shadowMap;
 // Shadow mapping
 float CalcShadows(vec4 fragPos)
 {
-    float bias = 0.1;
+    float bias = 0.0003;
 
     vec3 projectedCoords = fragPos.xyz / fragPos.w;
     projectedCoords = projectedCoords * 0.5 + 0.5;
@@ -115,7 +115,7 @@ void main() {
     vec3 H = normalize(V + L);
     float distance = length(vs_out.tangentLightPos - vs_out.tangentWorldPos);
     float attenuation = 1.0 / (distance * distance);
-    vec3 radiance = vec3(1.0, 1.0, 1.0) * attenuation;
+    vec3 radiance = vec3(23.47, 21.31, 20.79) * attenuation;
 
     float NDF = DistributionGGX(N, H, roughness);
     float G = GeometrySmith(N, V, L, roughness);
@@ -140,9 +140,9 @@ void main() {
     color = pow(color, vec3(1.0 / 3.1));
 
     vec4 emissive = texture(material.texture_emissive1, vs_out.texCoords);
-    // color += emissive.xyz;
+    // color = mix(color, emissive.xyz, emissive.w); // BUG: Models without emissive textures sometimes use other textures? (see mcrn_tachi)
 
-    fragColor = vec4(color - (CalcShadows(vs_out.fragPosLightSpace) * 0.03), albedoSrc.w);
+    fragColor = vec4(color - (CalcShadows(vs_out.fragPosLightSpace) * 0.1), albedoSrc.w);
 
     // fragColor = vec4(vec3(1.0 - CalcShadows(vs_out.fragPosLightSpace)), 1.0);
 }

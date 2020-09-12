@@ -246,9 +246,13 @@
               "target": "Package",
               "version": "[4.1.0, )"
             },
-            "System.Drawing.Common": {
+            "ImGui.NET": {
               "target": "Package",
-              "version": "[4.7.0, )"
+              "version": "[1.78.0, )"
+            },
+            "StbiSharp": {
+              "target": "Package",
+              "version": "[1.0.12, )"
             }
           },
           "imports": [

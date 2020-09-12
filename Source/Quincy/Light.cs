@@ -10,7 +10,9 @@ namespace Quincy
         public Light(Vector3f position)
         {
             Position = position;
-            ProjMatrix = Matrix4x4f.Ortho(-10f, 10f, -10f, 10f, 8f, 100f);
+            var size = 20f;
+            var farPlane = 200f;
+            ProjMatrix = Matrix4x4f.Ortho(-size, size, -size, size, 0.1f, farPlane);
             ViewMatrix = Matrix4x4f.Identity;
             ShadowMap = new ShadowMap(4096, 4096);
         }

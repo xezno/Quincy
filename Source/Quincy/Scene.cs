@@ -19,7 +19,7 @@ namespace Quincy
             shader = new Shader("Content/Shaders/PBR/pbr.frag", "Content/Shaders/PBR/pbr.vert");
             depthShader = new Shader("Content/Shaders/Depth/depth.frag", "Content/Shaders/Depth/depth.vert");
             camera = new Camera();
-            light = new Light(position: new Vector3f(0f, -5f, 50f));
+            light = new Light(position: new Vector3f(-10f, 10f, -4f));
         }
 
         public void Render()

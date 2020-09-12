@@ -94,6 +94,8 @@ namespace Quincy
                 var texture = Textures[i];
 
                 Gl.ActiveTexture(TextureUnit.Texture0 + i);
+                Gl.BindTexture(TextureTarget.Texture2d, texture.Id);
+
                 string name = texture.Type;
 
                 if (!counts.ContainsKey(name))
@@ -102,7 +104,6 @@ namespace Quincy
                 string number = (++counts[name]).ToString();
 
                 shader.SetInt($"material.{name}{number}", i);
-                Gl.BindTexture(TextureTarget.Texture2d, texture.Id);
             }
 
             shader.SetMatrix("projectionMatrix", camera.ProjMatrix);

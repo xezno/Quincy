@@ -14,6 +14,7 @@ namespace Quincy
         public bool isRunning = true;
         private Scene scene;
         private Gl.DebugProc debugProc;
+        private QuincyImGui imgui;
         #endregion
 
         #region Methods
@@ -47,6 +48,8 @@ namespace Quincy
             Gl.Enable(EnableCap.Blend);
             Gl.Enable(EnableCap.CullFace);
             Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
+            imgui = new QuincyImGui();
             scene = new Scene();
         }
 
@@ -65,15 +68,18 @@ namespace Quincy
 
         private void RenderToShadowMap()
         {
-            Gl.CullFace(CullFaceMode.Front);
+            Gl.Disable(EnableCap.CullFace);
+            //Gl.CullFace(CullFaceMode.Front);
             scene.RenderShadows();
-            Gl.CullFace(CullFaceMode.Back);
+            //Gl.CullFace(CullFaceMode.Back);
+            Gl.Enable(EnableCap.CullFace);
         }
 
         private void Render(object sender, NativeWindowEventArgs e)
         {
             RenderToShadowMap();
             RenderToScreen();
+            // imgui.Render();
         }
 
         public void Close()
