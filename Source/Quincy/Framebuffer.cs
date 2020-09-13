@@ -16,7 +16,7 @@ namespace Quincy
 
             ColorTexture = Gl.GenTexture();
             Gl.BindTexture(TextureTarget.Texture2d, ColorTexture);
-            Gl.TexImage2D(TextureTarget.Texture2d, 0, InternalFormat.Rgb, 1280, 720, 0, PixelFormat.Rgb, PixelType.Float, IntPtr.Zero);
+            Gl.TexImage2D(TextureTarget.Texture2d, 0, InternalFormat.Rgb16f, 1280, 720, 0, PixelFormat.Rgb, PixelType.Float, IntPtr.Zero);
 
             Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);

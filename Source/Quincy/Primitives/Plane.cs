@@ -125,6 +125,8 @@ namespace Quincy.Primitives
             Gl.BindTexture(TextureTarget.Texture2d, diffuseTexture);
             shader.SetInt("diffuseTexture", 0);
 
+            shader.SetFloat("exposure", 0.2f);
+
             Gl.ActiveTexture(TextureUnit.Texture0);
 
             Gl.BindVertexArray(vao);

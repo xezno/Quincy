@@ -56,7 +56,7 @@ float GetRand(vec4 seed)
 // Shadow mapping
 float CalcShadows(vec4 fragPos)
 {
-    float bias = 0.0006;
+    float bias = 0.0003;
 
     vec3 projectedCoords = fragPos.xyz / fragPos.w;
     projectedCoords = projectedCoords * 0.5 + 0.5;
@@ -65,13 +65,14 @@ float CalcShadows(vec4 fragPos)
 
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-    for (int i = 0; i < 1; ++i)
+    const int sampleCount = 32;
+    for (int i = 0; i < sampleCount - 1; ++i)
     { 
         int index = int(16.0 * GetRand(vec4(gl_FragCoord.xyy, i))) % 16;
         float projDepth = texture(shadowMap, projectedCoords.xy + poissonDisk[index] * texelSize).r;
         shadow += currentDepth - bias > projDepth ? 1.0 : 0.0;
     }
-    shadow /= 2.0;
+    shadow /= float(sampleCount);
 
     if (projectedCoords.z > 1.0)
         shadow = 0.0;
@@ -158,14 +159,19 @@ void main() {
     vec3 ambient = vec3(0.03) * albedo * ao;
     vec3 color = ambient + Lo;
 
+    // Gamma correction
     color = color / (color + vec3(1.0));
-    // color = pow(color, vec3(1.0 / 2.2));
     color = pow(color, vec3(1.0 / 2.2));
 
+    // Shadows
+    color = color - (CalcShadows(vs_out.fragPosLightSpace) * 0.05);
+    
+    // Emissive lighting
     vec4 emissive = texture(material.texture_emissive1, vs_out.texCoords);
     // color = mix(color, emissive.xyz, emissive.w); // BUG: Models without emissive textures sometimes use other textures? (see mcrn_tachi)
 
-    fragColor = vec4(color - (CalcShadows(vs_out.fragPosLightSpace) * 0.1), albedoSrc.w);
+    fragColor = vec4(color, albedoSrc.w);
 
+    // Debug
     // fragColor = vec4(vec3(1.0 - CalcShadows(vs_out.fragPosLightSpace)), 1.0);
 }
