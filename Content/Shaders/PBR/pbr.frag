@@ -66,13 +66,21 @@ float CalcShadows(vec4 fragPos)
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
     const int sampleCount = 32;
+    int totalSampleCount = 1;
     for (int i = 0; i < sampleCount - 1; ++i)
-    { 
+    {
+        if (i == sampleCount / 4 && (shadow == 0 || shadow == (sampleCount / 4)))
+        {
+            break; // Early bail
+        }
+
         int index = int(16.0 * GetRand(vec4(gl_FragCoord.xyy, i))) % 16;
         float projDepth = texture(shadowMap, projectedCoords.xy + poissonDisk[index] * texelSize).r;
         shadow += currentDepth - bias > projDepth ? 1.0 : 0.0;
+
+        totalSampleCount++;
     }
-    shadow /= float(sampleCount);
+    shadow /= float(totalSampleCount);
 
     if (projectedCoords.z > 1.0)
         shadow = 0.0;
@@ -91,7 +99,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
     float denom = (NdotH2 * (a2 - 1.0) + 1.0);
     denom = PI * denom * denom;
 
-    return a2 / denom;
+    return a2 / max(denom, 0.001);
 }
 
 float GeometrySchlickGGX(float NdotV, float roughness)
@@ -139,11 +147,11 @@ void main() {
     vec3 H = normalize(V + L);
     float distance = length(vs_out.tangentLightPos - vs_out.tangentWorldPos);
     float attenuation = 1.0 / (distance * distance);
-    vec3 radiance = vec3(23.47, 21.31, 20.79) * attenuation;
+    vec3 radiance = vec3(23.47, 21.31, 20.79) * attenuation * 10.0;
 
     float NDF = DistributionGGX(N, H, roughness);
     float G = GeometrySmith(N, V, L, roughness);
-    vec3 F = FresnelSchlick(max(dot(H, V), 0.0), F0);
+    vec3 F = FresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
 
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
@@ -162,14 +170,17 @@ void main() {
     // Gamma correction
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0 / 2.2));
-
-    // Shadows
-    color = color - (CalcShadows(vs_out.fragPosLightSpace) * 0.05);
     
     // Emissive lighting
     vec4 emissive = texture(material.texture_emissive1, vs_out.texCoords);
     // color = mix(color, emissive.xyz, emissive.w); // BUG: Models without emissive textures sometimes use other textures? (see mcrn_tachi)
 
+    // Shadows
+    color = color - (CalcShadows(vs_out.fragPosLightSpace) * 0.05);
+
+    if (albedoSrc.w < 1.0)
+        discard;
+    
     fragColor = vec4(color, albedoSrc.w);
 
     // Debug

@@ -145,7 +145,7 @@ namespace Quincy
         public void Update(float deltaTime)
         {
             ModelMatrix = Matrix4x4f.Identity;
-            var scale = 0.015f;
+            var scale = 5f;
             ModelMatrix.Scale(scale, scale, scale);
         }
     }

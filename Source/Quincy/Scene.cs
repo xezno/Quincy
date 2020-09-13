@@ -22,7 +22,7 @@ namespace Quincy
 
         public Scene()
         {
-            testModel = new Model("Content/Models/mcrn_tachi/scene.gltf");
+            testModel = new Model("Content/Models/the_matrix_red_chesterfield_chair/scene.gltf");
             shader = new Shader("Content/Shaders/PBR/pbr.frag", "Content/Shaders/PBR/pbr.vert");
             depthShader = new Shader("Content/Shaders/Depth/depth.frag", "Content/Shaders/Depth/depth.vert");
             camera = new Camera();
@@ -39,15 +39,23 @@ namespace Quincy
         {
             Update();
 
+            // Render scene to framebuffer
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, mainFramebuffer.Fbo);
-
             Gl.Viewport(0, 0, 1280, 720);
+            Gl.ClearDepth(0.0f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            Gl.ClipControl(ClipControlOrigin.LowerLeft, ClipControlDepth.ZeroToOne);
+            Gl.DepthFunc(DepthFunction.Greater);
 
             camera.Render();
             testModel.Draw(camera, shader, light);
-            Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            Gl.DepthFunc(DepthFunction.Less);
+            Gl.ClipControl(ClipControlOrigin.LowerLeft, ClipControlDepth.NegativeOneToOne);
 
+            // Render framebuffer to screen
+
+            Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            Gl.ClearDepth(1.0f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             framebufferRenderPlane.Draw(framebufferRenderShader, mainFramebuffer.ColorTexture);

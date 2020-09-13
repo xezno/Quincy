@@ -23,10 +23,9 @@ namespace Quincy
 
         public Camera()
         {
-            ProjMatrix = Matrix4x4f.Perspective(FieldOfView,
+            ProjMatrix = CreateInfReversedZProj(FieldOfView,
                 1280f / 720f,
-                NearPlane,
-                FarPlane);
+                NearPlane);
         }
 
         private Matrix4x4f CreateInfReversedZProj(float fov, float aspectRatio, float nearPlane)
