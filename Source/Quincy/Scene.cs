@@ -1,0 +1,77 @@
+﻿using OpenGL;
+using Quincy.MathUtils;
+using Quincy.Primitives;
+using System;
+
+namespace Quincy
+{
+    class Scene
+    {
+        private Model testModel;
+        private Shader shader, depthShader;
+        private Camera camera;
+        private Light light;
+
+        private Framebuffer mainFramebuffer;
+        private Plane framebufferRenderPlane;
+        private Shader framebufferRenderShader;
+
+        private DateTime lastUpdate;
+
+        public Scene()
+        {
+            testModel = new Model("Content/Models/mcrn_tachi/scene.gltf");
+            shader = new Shader("Content/Shaders/PBR/pbr.frag", "Content/Shaders/PBR/pbr.vert");
+            depthShader = new Shader("Content/Shaders/Depth/depth.frag", "Content/Shaders/Depth/depth.vert");
+            camera = new Camera();
+            light = new Light(position: new Vector3f(-10f, 10f, -4f));
+            
+            framebufferRenderShader = new Shader("Content/Shaders/Framebuffer/framebuffer.frag", "Content/Shaders/Framebuffer/framebuffer.vert");
+            framebufferRenderPlane = new Plane();
+            mainFramebuffer = new Framebuffer();
+        }
+
+        public void Render()
+        {
+            Update();
+
+            Gl.BindFramebuffer(FramebufferTarget.Framebuffer, mainFramebuffer.Fbo);
+
+            Gl.Viewport(0, 0, 1280, 720);
+            Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            camera.Render();
+            testModel.Draw(camera, shader, light);
+            Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+
+            Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            framebufferRenderPlane.Draw(framebufferRenderShader, mainFramebuffer.ColorTexture);
+        }
+
+        public void RenderShadows()
+        {
+            Gl.Disable(EnableCap.CullFace); //Gl.CullFace(CullFaceMode.Front);
+
+            Gl.Viewport(0, 0, (int)light.ShadowMap.Resolution.x, (int)light.ShadowMap.Resolution.y);
+            Gl.BindFramebuffer(FramebufferTarget.Framebuffer, light.ShadowMap.DepthMapFbo);
+            Gl.Clear(ClearBufferMask.DepthBufferBit);
+
+            light.Render();
+            testModel.DrawShadows(light, depthShader);
+
+            Gl.Enable(EnableCap.CullFace); //Gl.CullFace(CullFaceMode.Back);
+                        
+            Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        }
+
+        public void Update()
+        {
+            float deltaTime = (float)(DateTime.Now - lastUpdate).TotalSeconds;
+            testModel.Update(deltaTime);
+            camera.Update(deltaTime);
+
+            lastUpdate = DateTime.Now;
+        }
+    }
+}

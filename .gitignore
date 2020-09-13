@@ -360,3 +360,21 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+Content/Models/vtech/
+
+Content/Models/mcrn_tachi/
+
+Content/Models/dica/
+
+Content/Models/panasonic_s-xbs/
+
+Content/Models/datsun/
+
+Content/Models/italia_velocita_reworked/
+
+Content/Models/rainier/
+
+Content/Models/the_matrix_red_chesterfield_chair/
+
+Content/Fonts/

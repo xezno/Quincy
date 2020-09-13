@@ -49,12 +49,10 @@ namespace Quincy.DebugUtils
             // Prepare method name & method class name
             var stackTrace = new StackTrace();
 
-            /* BUG: Some functions (namely ogl's debug callback) run on a separate thread, so 
-             * they mess with the console's foreground color before another thread has finished outputting.
-             * (pls fix) */
+            if (severity == Severity.Fatal)
+                throw new Exception(str);
 
             Console.ForegroundColor = SeverityToConsoleColor(severity);
-
             var logTextNoSeverity = str;
 
             WriteLog(stackTrace, logTextNoSeverity, severity);
