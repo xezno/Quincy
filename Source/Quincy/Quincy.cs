@@ -48,7 +48,6 @@ namespace Quincy
             Gl.Enable(EnableCap.Blend);
             Gl.Enable(EnableCap.CullFace);
             Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-
             imgui = new QuincyImGui();
             scene = new Scene();
         }
@@ -68,11 +67,7 @@ namespace Quincy
 
         private void RenderToShadowMap()
         {
-            Gl.Disable(EnableCap.CullFace);
-            //Gl.CullFace(CullFaceMode.Front);
             scene.RenderShadows();
-            //Gl.CullFace(CullFaceMode.Back);
-            Gl.Enable(EnableCap.CullFace);
         }
 
         private void Render(object sender, NativeWindowEventArgs e)

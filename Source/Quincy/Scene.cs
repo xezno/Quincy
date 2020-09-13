@@ -1,5 +1,6 @@
 ﻿using OpenGL;
 using Quincy.MathUtils;
+using Quincy.Primitives;
 using System;
 
 namespace Quincy
@@ -11,6 +12,10 @@ namespace Quincy
         private Camera camera;
         private Light light;
 
+        private Framebuffer mainFramebuffer;
+        private Plane framebufferRenderPlane;
+        private Shader framebufferRenderShader;
+
         private DateTime lastUpdate;
 
         public Scene()
@@ -20,29 +25,43 @@ namespace Quincy
             depthShader = new Shader("Content/Shaders/Depth/depth.frag", "Content/Shaders/Depth/depth.vert");
             camera = new Camera();
             light = new Light(position: new Vector3f(-10f, 10f, -4f));
+            
+            framebufferRenderShader = new Shader("Content/Shaders/Framebuffer/framebuffer.frag", "Content/Shaders/Framebuffer/framebuffer.vert");
+            framebufferRenderPlane = new Plane();
+            mainFramebuffer = new Framebuffer();
         }
 
         public void Render()
         {
             Update();
 
+            Gl.BindFramebuffer(FramebufferTarget.Framebuffer, mainFramebuffer.Fbo);
+
             Gl.Viewport(0, 0, 1280, 720);
-            // Gl.ClearColor(100/255f, 149/255f, 237/255f, 1.0f);
-            Gl.ClearColor(1f, 1f, 1f, 1f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
             camera.Render();
             testModel.Draw(camera, shader, light);
+            Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+
+            Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+            framebufferRenderPlane.Draw(framebufferRenderShader, mainFramebuffer.ColorTexture);
         }
 
         public void RenderShadows()
         {
+            Gl.Disable(EnableCap.CullFace); //Gl.CullFace(CullFaceMode.Front);
+
             Gl.Viewport(0, 0, (int)light.ShadowMap.Resolution.x, (int)light.ShadowMap.Resolution.y);
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, light.ShadowMap.DepthMapFbo);
             Gl.Clear(ClearBufferMask.DepthBufferBit);
-            
+
             light.Render();
             testModel.DrawShadows(light, depthShader);
-            
+
+            Gl.Enable(EnableCap.CullFace); //Gl.CullFace(CullFaceMode.Back);
+                        
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
 
