@@ -16,6 +16,8 @@ namespace Quincy
         private Plane framebufferRenderPlane;
         private Shader framebufferRenderShader;
 
+        private HdriTexture skyHdri;
+
         private DateTime lastUpdate;
 
         public Scene()
@@ -25,6 +27,8 @@ namespace Quincy
             depthShader = new Shader("Content/Shaders/Depth/depth.frag", "Content/Shaders/Depth/depth.vert");
             camera = new Camera();
             light = new Light(position: new Vector3f(-10f, 10f, -4f));
+
+            skyHdri = HdriTexture.LoadFromFile("Content/HDRIs/gamrig_4k.hdr");
             
             framebufferRenderShader = new Shader("Content/Shaders/Framebuffer/framebuffer.frag", "Content/Shaders/Framebuffer/framebuffer.vert");
             framebufferRenderPlane = new Plane();
