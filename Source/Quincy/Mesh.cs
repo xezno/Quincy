@@ -86,6 +86,7 @@ namespace Quincy
         public void Draw(Camera camera, Shader shader, Light light)
         {
             Dictionary<string, uint> counts = new Dictionary<string, uint>();
+            List<string> expected = new List<string>() { "texture_diffuse", "texture_emissive", "texture_unknown", "texture_normal" };
 
             shader.Use();
 
@@ -103,7 +104,16 @@ namespace Quincy
 
                 string number = (++counts[name]).ToString();
 
-                shader.SetInt($"material.{name}{number}", i);
+                shader.SetBool($"material.{name}{number}.exists", true);
+                shader.SetInt($"material.{name}{number}.texture", i);
+            }
+
+            foreach (var expectedVar in expected)
+            {
+                if (!counts.ContainsKey(expectedVar))
+                {
+                    shader.SetBool($"material.{expectedVar}1.exists", false);
+                }
             }
 
             shader.SetMatrix("projectionMatrix", camera.ProjMatrix);
@@ -145,7 +155,7 @@ namespace Quincy
         public void Update(float deltaTime)
         {
             ModelMatrix = Matrix4x4f.Identity;
-            var scale = 0.015f;
+            var scale = 0.0125f;
             ModelMatrix.Scale(scale, scale, scale);
         }
     }

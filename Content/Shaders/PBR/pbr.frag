@@ -4,8 +4,11 @@ const float PI = 3.14159265359;
 in VS_OUT {
     vec2 texCoords;
     vec3 normal;
-    vec3 worldPos;
     vec4 fragPosLightSpace;
+
+    vec3 lightPos;
+    vec3 camPos;
+    vec3 worldPos;
 
     vec3 tangentLightPos;
     vec3 tangentCamPos;
@@ -14,15 +17,20 @@ in VS_OUT {
 
 out vec4 fragColor;
 
+struct Texture {
+    bool exists;
+    sampler2D texture;
+};
+
 struct Material {
-    sampler2D texture_diffuse1;
-    sampler2D texture_diffuse2;
+    Texture texture_diffuse1;
+    Texture texture_diffuse2;
 
-    sampler2D texture_emissive1;
+    Texture texture_emissive1;
 
-    sampler2D texture_unknown1;
+    Texture texture_unknown1;
 
-    sampler2D texture_normal1;
+    Texture texture_normal1;
 };
 
 uniform Material material;
@@ -56,7 +64,7 @@ float GetRand(vec4 seed)
 // Shadow mapping
 float CalcShadows(vec4 fragPos)
 {
-    float bias = 0.0006;
+    float bias = 0.0003;
 
     vec3 projectedCoords = fragPos.xyz / fragPos.w;
     projectedCoords = projectedCoords * 0.5 + 0.5;
@@ -65,13 +73,22 @@ float CalcShadows(vec4 fragPos)
 
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
-    for (int i = 0; i < 1; ++i)
-    { 
+    const int sampleCount = 32;
+    int totalSampleCount = 1;
+    for (int i = 0; i < sampleCount - 1; ++i)
+    {
+        if (i == sampleCount / 4 && (shadow == 0 || shadow == (sampleCount / 4)))
+        {
+            break; // Early bail
+        }
+
         int index = int(16.0 * GetRand(vec4(gl_FragCoord.xyy, i))) % 16;
         float projDepth = texture(shadowMap, projectedCoords.xy + poissonDisk[index] * texelSize).r;
         shadow += currentDepth - bias > projDepth ? 1.0 : 0.0;
+
+        totalSampleCount++;
     }
-    shadow /= 2.0;
+    shadow /= float(totalSampleCount);
 
     if (projectedCoords.z > 1.0)
         shadow = 0.0;
@@ -90,7 +107,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
     float denom = (NdotH2 * (a2 - 1.0) + 1.0);
     denom = PI * denom * denom;
 
-    return a2 / denom;
+    return a2 / max(denom, 0.001);
 }
 
 float GeometrySchlickGGX(float NdotV, float roughness)
@@ -118,13 +135,13 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
 }
 
 void main() {
-    vec4 albedoSrc = texture(material.texture_diffuse1, vs_out.texCoords);
+    vec4 albedoSrc = texture(material.texture_diffuse1.texture, vs_out.texCoords);
     vec3 albedo = albedoSrc.xyz;
-    float ao = texture(material.texture_unknown1, vs_out.texCoords).x;
-    float roughness = texture(material.texture_unknown1, vs_out.texCoords).y;
-    float metallic = texture(material.texture_unknown1, vs_out.texCoords).z;
+    float ao = texture(material.texture_unknown1.texture, vs_out.texCoords).x;
+    float roughness = texture(material.texture_unknown1.texture, vs_out.texCoords).y;
+    float metallic = texture(material.texture_unknown1.texture, vs_out.texCoords).z;
 
-    vec3 normal = texture(material.texture_normal1, vs_out.texCoords).xyz;
+    vec3 normal = texture(material.texture_normal1.texture, vs_out.texCoords).xyz;
     normal = normalize(normal * 2.0 - 1.0);
 
     vec3 N = normalize(normal);
@@ -138,11 +155,11 @@ void main() {
     vec3 H = normalize(V + L);
     float distance = length(vs_out.tangentLightPos - vs_out.tangentWorldPos);
     float attenuation = 1.0 / (distance * distance);
-    vec3 radiance = vec3(23.47, 21.31, 20.79) * attenuation;
+    vec3 radiance = vec3(23.47, 21.31, 20.79) * 10.0 * attenuation;
 
     float NDF = DistributionGGX(N, H, roughness);
     float G = GeometrySmith(N, V, L, roughness);
-    vec3 F = FresnelSchlick(max(dot(H, V), 0.0), F0);
+    vec3 F = FresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
 
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
@@ -158,14 +175,26 @@ void main() {
     vec3 ambient = vec3(0.03) * albedo * ao;
     vec3 color = ambient + Lo;
 
-    color = color / (color + vec3(1.0));
+    // Gamma correction
+    // color = color / (color + vec3(1.0));
     // color = pow(color, vec3(1.0 / 2.2));
-    color = pow(color, vec3(1.0 / 2.2));
 
-    vec4 emissive = texture(material.texture_emissive1, vs_out.texCoords);
-    // color = mix(color, emissive.xyz, emissive.w); // BUG: Models without emissive textures sometimes use other textures? (see mcrn_tachi)
+    // Shadows
+    color = color - (CalcShadows(vs_out.fragPosLightSpace) * 0.1);
+    
+    // Emissive lighting
+    if (material.texture_emissive1.exists)
+    {
+        vec4 emissive = texture(material.texture_emissive1.texture, vs_out.texCoords);
+        float value = max(max(emissive.x, emissive.y), emissive.z);
+        color = mix(color, emissive.xyz, value);
+    }
 
-    fragColor = vec4(color - (CalcShadows(vs_out.fragPosLightSpace) * 0.1), albedoSrc.w);
+    if (albedoSrc.w < 1.0)
+        discard;
+    
+    fragColor = vec4(color, albedoSrc.w);
 
-    // fragColor = vec4(vec3(1.0 - CalcShadows(vs_out.fragPosLightSpace)), 1.0);
+    // Debug
+    // fragColor = vec4(vec3(roughness), 1.0);
 }

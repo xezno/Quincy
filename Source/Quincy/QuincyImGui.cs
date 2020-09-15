@@ -24,7 +24,7 @@ namespace Quincy
 
         public QuincyImGui()
         {
-            windowSize = new Vector2(1280, 720);
+            windowSize = new Vector2(Constants.windowWidth, Constants.windowHeight);
 
             var imGuiContext = ImGui.CreateContext();
 
@@ -125,7 +125,7 @@ namespace Quincy
             Gl.Disable(EnableCap.DepthTest);
             Gl.Enable(EnableCap.ScissorTest);
 
-            io.DisplaySize = new Vector2(1280, 720);
+            io.DisplaySize = new Vector2(Constants.windowWidth, Constants.windowHeight);
             var projectionMatrix = Matrix4x4f.Ortho2D(0f, io.DisplaySize.X, io.DisplaySize.Y, 0.0f);
 
             imguiShader.Use();

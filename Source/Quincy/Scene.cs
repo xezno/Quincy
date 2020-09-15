@@ -16,6 +16,8 @@ namespace Quincy
         private Plane framebufferRenderPlane;
         private Shader framebufferRenderShader;
 
+        private HdriTexture skyHdri;
+
         private DateTime lastUpdate;
 
         public Scene()
@@ -23,8 +25,10 @@ namespace Quincy
             testModel = new Model("Content/Models/mcrn_tachi/scene.gltf");
             shader = new Shader("Content/Shaders/PBR/pbr.frag", "Content/Shaders/PBR/pbr.vert");
             depthShader = new Shader("Content/Shaders/Depth/depth.frag", "Content/Shaders/Depth/depth.vert");
-            camera = new Camera();
-            light = new Light(position: new Vector3f(-10f, 10f, -4f));
+            camera = new Camera(position: new Vector3f(0, 0f, 1f));
+            light = new Light(position: new Vector3f(0, 10f, 0));
+
+            skyHdri = HdriTexture.LoadFromFile("Content/HDRIs/gamrig_4k.hdr");
             
             framebufferRenderShader = new Shader("Content/Shaders/Framebuffer/framebuffer.frag", "Content/Shaders/Framebuffer/framebuffer.vert");
             framebufferRenderPlane = new Plane();
@@ -35,17 +39,26 @@ namespace Quincy
         {
             Update();
 
+            // Render scene to framebuffer
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, mainFramebuffer.Fbo);
-
-            Gl.Viewport(0, 0, 1280, 720);
+            Gl.Viewport(0, 0, Constants.windowWidth, Constants.windowHeight);
+            Gl.ClearDepth(0.0f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            Gl.ClipControl(ClipControlOrigin.LowerLeft, ClipControlDepth.ZeroToOne);
+            Gl.DepthFunc(DepthFunction.Greater);
 
             camera.Render();
             testModel.Draw(camera, shader, light);
+            Gl.DepthFunc(DepthFunction.Less);
+            Gl.ClipControl(ClipControlOrigin.LowerLeft, ClipControlDepth.NegativeOneToOne);
+
+            // Render framebuffer to screen
+
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-
+            Gl.ClearDepth(1.0f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
+            
+            framebufferRenderShader.SetFloat("exposure", 2.0f);
             framebufferRenderPlane.Draw(framebufferRenderShader, mainFramebuffer.ColorTexture);
         }
 

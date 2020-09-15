@@ -35,6 +35,7 @@ namespace Quincy
 
             window.Create(128, 128, (uint)windowResX + 16, (uint)windowResY + 16, NativeWindowStyles.Caption | NativeWindowStyles.Border);
             window.Caption = windowTitle;
+            // window.Fullscreen = true;
 
             window.Show();
             window.Run();
