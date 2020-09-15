@@ -22,11 +22,11 @@ namespace Quincy
 
         public Scene()
         {
-            testModel = new Model("Content/Models/the_matrix_red_chesterfield_chair/scene.gltf");
+            testModel = new Model("Content/Models/mcrn_tachi/scene.gltf");
             shader = new Shader("Content/Shaders/PBR/pbr.frag", "Content/Shaders/PBR/pbr.vert");
             depthShader = new Shader("Content/Shaders/Depth/depth.frag", "Content/Shaders/Depth/depth.vert");
-            camera = new Camera();
-            light = new Light(position: new Vector3f(-10f, 10f, -4f));
+            camera = new Camera(position: new Vector3f(0, 0f, 1f));
+            light = new Light(position: new Vector3f(0, 10f, 0));
 
             skyHdri = HdriTexture.LoadFromFile("Content/HDRIs/gamrig_4k.hdr");
             
@@ -57,7 +57,8 @@ namespace Quincy
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             Gl.ClearDepth(1.0f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
+            
+            framebufferRenderShader.SetFloat("exposure", 1.0f);
             framebufferRenderPlane.Draw(framebufferRenderShader, mainFramebuffer.ColorTexture);
         }
 

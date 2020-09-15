@@ -4,8 +4,11 @@ const float PI = 3.14159265359;
 in VS_OUT {
     vec2 texCoords;
     vec3 normal;
-    vec3 worldPos;
     vec4 fragPosLightSpace;
+
+    vec3 lightPos;
+    vec3 camPos;
+    vec3 worldPos;
 
     vec3 tangentLightPos;
     vec3 tangentCamPos;
@@ -147,7 +150,7 @@ void main() {
     vec3 H = normalize(V + L);
     float distance = length(vs_out.tangentLightPos - vs_out.tangentWorldPos);
     float attenuation = 1.0 / (distance * distance);
-    vec3 radiance = vec3(23.47, 21.31, 20.79) * attenuation * 10.0;
+    vec3 radiance = vec3(23.47, 21.31, 20.79) * 10.0 * attenuation;
 
     float NDF = DistributionGGX(N, H, roughness);
     float G = GeometrySmith(N, V, L, roughness);
@@ -168,15 +171,15 @@ void main() {
     vec3 color = ambient + Lo;
 
     // Gamma correction
-    color = color / (color + vec3(1.0));
-    color = pow(color, vec3(1.0 / 2.2));
+    // color = color / (color + vec3(1.0));
+    // color = pow(color, vec3(1.0 / 2.2));
     
     // Emissive lighting
     vec4 emissive = texture(material.texture_emissive1, vs_out.texCoords);
     // color = mix(color, emissive.xyz, emissive.w); // BUG: Models without emissive textures sometimes use other textures? (see mcrn_tachi)
 
     // Shadows
-    color = color - (CalcShadows(vs_out.fragPosLightSpace) * 0.05);
+    color = color - (CalcShadows(vs_out.fragPosLightSpace) * 0.01);
 
     if (albedoSrc.w < 1.0)
         discard;
@@ -184,5 +187,5 @@ void main() {
     fragColor = vec4(color, albedoSrc.w);
 
     // Debug
-    // fragColor = vec4(vec3(1.0 - CalcShadows(vs_out.fragPosLightSpace)), 1.0);
+    // fragColor = vec4(vec3(N), 1.0);
 }

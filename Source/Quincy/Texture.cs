@@ -41,6 +41,8 @@ namespace Quincy
             var internalFormat = InternalFormat.Rgba;
             if (typeName == "texture_diffuse")
                 internalFormat = InternalFormat.SrgbAlpha;
+            else if (typeName == "texture_normal")
+                internalFormat = InternalFormat.Rgba8;
 
             Gl.TexImage2D(TextureTarget.Texture2d, 0, internalFormat, image.Width, image.Height, 0, imageFormat, PixelType.UnsignedByte, textureDataPtr);
 
