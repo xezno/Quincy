@@ -41,7 +41,7 @@ namespace Quincy
 
             // Render scene to framebuffer
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, mainFramebuffer.Fbo);
-            Gl.Viewport(0, 0, 1280, 720);
+            Gl.Viewport(0, 0, Constants.windowWidth, Constants.windowHeight);
             Gl.ClearDepth(0.0f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             Gl.ClipControl(ClipControlOrigin.LowerLeft, ClipControlDepth.ZeroToOne);
@@ -58,7 +58,7 @@ namespace Quincy
             Gl.ClearDepth(1.0f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             
-            framebufferRenderShader.SetFloat("exposure", 1.0f);
+            framebufferRenderShader.SetFloat("exposure", 2.0f);
             framebufferRenderPlane.Draw(framebufferRenderShader, mainFramebuffer.ColorTexture);
         }
 

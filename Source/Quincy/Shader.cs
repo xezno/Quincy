@@ -76,6 +76,14 @@ namespace Quincy
             }
         }
 
+        internal void SetBool(string name, bool value)
+        {
+            if (GetUniformLocation(name, out int loc))
+            {
+                Gl.ProgramUniform1(Id, loc, value ? 1 : 0);
+            }
+        }
+
         private bool GetUniformLocation(string name, out int loc)
         {
             loc = Gl.GetUniformLocation(Id, name);

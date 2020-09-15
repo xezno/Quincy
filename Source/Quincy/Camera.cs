@@ -26,7 +26,7 @@ namespace Quincy
         {
             this.position = position;
             ProjMatrix = CreateInfReversedZProj(FieldOfView,
-                1280f / 720f,
+                (float)Constants.windowWidth / (float)Constants.windowHeight,
                 NearPlane);
         }
 
@@ -47,7 +47,7 @@ namespace Quincy
             viewMatrix = Matrix4x4f.Identity;
 
             position.x = MathF.Cos(angle) * 10f;
-            position.y = 10f;
+            position.y = 0f;
             position.z = MathF.Sin(angle) * 10f;
 
             angle += deltaTime;

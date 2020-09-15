@@ -17,15 +17,20 @@ in VS_OUT {
 
 out vec4 fragColor;
 
+struct Texture {
+    bool exists;
+    sampler2D texture;
+};
+
 struct Material {
-    sampler2D texture_diffuse1;
-    sampler2D texture_diffuse2;
+    Texture texture_diffuse1;
+    Texture texture_diffuse2;
 
-    sampler2D texture_emissive1;
+    Texture texture_emissive1;
 
-    sampler2D texture_unknown1;
+    Texture texture_unknown1;
 
-    sampler2D texture_normal1;
+    Texture texture_normal1;
 };
 
 uniform Material material;
@@ -130,13 +135,13 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
 }
 
 void main() {
-    vec4 albedoSrc = texture(material.texture_diffuse1, vs_out.texCoords);
+    vec4 albedoSrc = texture(material.texture_diffuse1.texture, vs_out.texCoords);
     vec3 albedo = albedoSrc.xyz;
-    float ao = texture(material.texture_unknown1, vs_out.texCoords).x;
-    float roughness = texture(material.texture_unknown1, vs_out.texCoords).y;
-    float metallic = texture(material.texture_unknown1, vs_out.texCoords).z;
+    float ao = texture(material.texture_unknown1.texture, vs_out.texCoords).x;
+    float roughness = texture(material.texture_unknown1.texture, vs_out.texCoords).y;
+    float metallic = texture(material.texture_unknown1.texture, vs_out.texCoords).z;
 
-    vec3 normal = texture(material.texture_normal1, vs_out.texCoords).xyz;
+    vec3 normal = texture(material.texture_normal1.texture, vs_out.texCoords).xyz;
     normal = normalize(normal * 2.0 - 1.0);
 
     vec3 N = normalize(normal);
@@ -173,13 +178,17 @@ void main() {
     // Gamma correction
     // color = color / (color + vec3(1.0));
     // color = pow(color, vec3(1.0 / 2.2));
-    
-    // Emissive lighting
-    vec4 emissive = texture(material.texture_emissive1, vs_out.texCoords);
-    // color = mix(color, emissive.xyz, emissive.w); // BUG: Models without emissive textures sometimes use other textures? (see mcrn_tachi)
 
     // Shadows
-    color = color - (CalcShadows(vs_out.fragPosLightSpace) * 0.01);
+    color = color - (CalcShadows(vs_out.fragPosLightSpace) * 0.1);
+    
+    // Emissive lighting
+    if (material.texture_emissive1.exists)
+    {
+        vec4 emissive = texture(material.texture_emissive1.texture, vs_out.texCoords);
+        float value = max(max(emissive.x, emissive.y), emissive.z);
+        color = mix(color, emissive.xyz, value);
+    }
 
     if (albedoSrc.w < 1.0)
         discard;
@@ -187,5 +196,5 @@ void main() {
     fragColor = vec4(color, albedoSrc.w);
 
     // Debug
-    // fragColor = vec4(vec3(N), 1.0);
+    // fragColor = vec4(vec3(roughness), 1.0);
 }

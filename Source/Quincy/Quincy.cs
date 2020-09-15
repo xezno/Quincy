@@ -31,6 +31,7 @@ namespace Quincy
             window.CursorVisible = true;
             window.DepthBits = 24;
             window.SwapInterval = 0;
+            window.MultisampleBits = 16;
 
             window.Create(128, 128, (uint)windowResX + 16, (uint)windowResY + 16, NativeWindowStyles.Caption | NativeWindowStyles.Border);
             window.Caption = windowTitle;
