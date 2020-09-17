@@ -127,6 +127,11 @@ namespace Quincy.Primitives
 
             Gl.ActiveTexture(TextureUnit.Texture0);
 
+            DrawRaw();
+        }
+
+        public void DrawRaw()
+        {
             Gl.BindVertexArray(vao);
             Gl.DrawElements(PrimitiveType.Triangles, Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
             Gl.BindVertexArray(0);

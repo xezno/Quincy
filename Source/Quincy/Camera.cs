@@ -14,7 +14,6 @@ namespace Quincy
 
         public float FieldOfView { get; set; } = 70f;
         public float NearPlane { get; set; } = 0.1f;
-        public float FarPlane { get; set; } = 2500f;
 
         private Matrix4x4f viewMatrix;
         public Matrix4x4f ViewMatrix { get => viewMatrix; set => viewMatrix = value; }
@@ -47,7 +46,7 @@ namespace Quincy
             viewMatrix = Matrix4x4f.Identity;
 
             position.x = MathF.Cos(angle) * 10f;
-            position.y = 0f;
+            position.y = 10f;
             position.z = MathF.Sin(angle) * 10f;
 
             angle += deltaTime;

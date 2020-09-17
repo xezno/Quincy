@@ -16,9 +16,16 @@ namespace Quincy
         private Plane framebufferRenderPlane;
         private Shader framebufferRenderShader;
 
-        private HdriTexture skyHdri;
-
         private DateTime lastUpdate;
+
+        private Cubemap skybox;
+        private Cubemap convolutedSkybox;
+        private Cubemap prefilteredSkybox;
+
+        private Texture brdfLut;
+
+        private Shader skyboxShader;
+        private Cube skyboxCube;
 
         public Scene()
         {
@@ -27,12 +34,24 @@ namespace Quincy
             depthShader = new Shader("Content/Shaders/Depth/depth.frag", "Content/Shaders/Depth/depth.vert");
             camera = new Camera(position: new Vector3f(0, 0f, 1f));
             light = new Light(position: new Vector3f(0, 10f, 0));
-
-            skyHdri = HdriTexture.LoadFromFile("Content/HDRIs/gamrig_4k.hdr");
             
             framebufferRenderShader = new Shader("Content/Shaders/Framebuffer/framebuffer.frag", "Content/Shaders/Framebuffer/framebuffer.vert");
             framebufferRenderPlane = new Plane();
             mainFramebuffer = new Framebuffer();
+
+            var cubemaps = EquirectangularToCubemap.Convert("Content/HDRIs/gamrig_4k.hdr");
+            skybox = cubemaps.Item1;
+            convolutedSkybox = cubemaps.Item2;
+            prefilteredSkybox = cubemaps.Item3;
+
+            brdfLut = new Texture() {
+                Id = EquirectangularToCubemap.CreateBrdfLut(),
+                Path = "brdfLut",
+                Type = "texture_lut"
+            };
+
+            skyboxShader = new Shader("Content/Shaders/Skybox/skybox.frag", "Content/Shaders/Skybox/skybox.vert");
+            skyboxCube = new Cube();
         }
 
         public void Render()
@@ -48,12 +67,13 @@ namespace Quincy
             Gl.DepthFunc(DepthFunction.Greater);
 
             camera.Render();
-            testModel.Draw(camera, shader, light);
+            DrawSkybox();
+            testModel.Draw(camera, shader, light, (skybox, convolutedSkybox, prefilteredSkybox), brdfLut);
+
             Gl.DepthFunc(DepthFunction.Less);
             Gl.ClipControl(ClipControlOrigin.LowerLeft, ClipControlDepth.NegativeOneToOne);
 
             // Render framebuffer to screen
-
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             Gl.ClearDepth(1.0f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -85,6 +105,29 @@ namespace Quincy
             camera.Update(deltaTime);
 
             lastUpdate = DateTime.Now;
+        }
+
+        private void DrawSkybox()
+        {
+            Gl.Disable(EnableCap.CullFace);
+            // Gl.DepthFunc(DepthFunction.Lequal);
+            var modelMatrix = Matrix4x4f.Identity;
+            var scale = 10000.0f;
+            modelMatrix.Scale(scale, scale, scale);
+            skyboxShader.Use();
+            skyboxShader.SetMatrix("projMatrix", camera.ProjMatrix);
+            skyboxShader.SetMatrix("viewMatrix", camera.ViewMatrix);
+            skyboxShader.SetMatrix("modelMatrix", modelMatrix);
+            skyboxShader.SetInt("environmentMap", 0);
+
+            Gl.ActiveTexture(TextureUnit.Texture0);
+            Gl.BindTexture(TextureTarget.TextureCubeMap, skybox.Id);
+
+            skyboxCube.Draw();
+
+            Gl.BindTexture(TextureTarget.TextureCubeMap, 0);
+            // Gl.DepthFunc(DepthFunction.Greater);
+            Gl.Enable(EnableCap.CullFace);
         }
     }
 }

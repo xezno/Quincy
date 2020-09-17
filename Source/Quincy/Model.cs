@@ -23,11 +23,11 @@ namespace Quincy
             LoadModel(path);
         }
 
-        public void Draw(Camera camera, Shader shader, Light light)
+        public void Draw(Camera camera, Shader shader, Light light, (Cubemap, Cubemap, Cubemap) pbrCubemaps, Texture brdfLut)
         {
             foreach (var mesh in meshes)
             {
-                mesh.Draw(camera, shader, light);
+                mesh.Draw(camera, shader, light, pbrCubemaps, brdfLut);
             }
         }
 
@@ -133,15 +133,48 @@ namespace Quincy
                 var material = scene.Materials[mesh.MaterialIndex];
                 var diffuseMaps = LoadMaterialTextures(material, TextureType.Diffuse, "texture_diffuse");
                 textures.AddRange(diffuseMaps);
+
+                if (diffuseMaps.Count == 0)
+                {
+                    textures.Add(Texture.LoadFromData(new[]
+                    {
+                        (byte)(material.ColorDiffuse.R * 255),
+                        (byte)(material.ColorDiffuse.G * 255),
+                        (byte)(material.ColorDiffuse.B * 255),
+                        (byte)(material.ColorDiffuse.A * 255)
+                    }, 1, 1, 4, "texture_diffuse"));
+                }
                 
                 var specularMaps = LoadMaterialTextures(material, TextureType.Specular, "texture_specular");
                 textures.AddRange(specularMaps);
+
+                if (specularMaps.Count == 0)
+                {
+                    textures.Add(Texture.LoadFromData(new[]
+                    {
+                        (byte)(material.ColorSpecular.R * 255),
+                        (byte)(material.ColorSpecular.G * 255),
+                        (byte)(material.ColorSpecular.B * 255),
+                        (byte)(material.ColorSpecular.A * 255)
+                    }, 1, 1, 4, "texture_specular"));
+                }
                 
                 var normalMaps = LoadMaterialTextures(material, TextureType.Normals, "texture_normal");
                 textures.AddRange(normalMaps);
                 
                 var emissiveMaps = LoadMaterialTextures(material, TextureType.Emissive, "texture_emissive");
                 textures.AddRange(emissiveMaps);
+
+                if (specularMaps.Count == 0)
+                {
+                    textures.Add(Texture.LoadFromData(new[]
+                    {
+                        (byte)(material.ColorEmissive.R * 255),
+                        (byte)(material.ColorEmissive.G * 255),
+                        (byte)(material.ColorEmissive.B * 255),
+                        (byte)(material.ColorEmissive.A * 255)
+                    }, 1, 1, 4, "texture_emissive"));
+                }
                 
                 var unknownMaps = LoadMaterialTextures(material, TextureType.Unknown, "texture_unknown"); // includes roughness
                 textures.AddRange(unknownMaps);

@@ -83,7 +83,7 @@ namespace Quincy
             Gl.BindVertexArray(0);
         }
 
-        public void Draw(Camera camera, Shader shader, Light light)
+        public void Draw(Camera camera, Shader shader, Light light, (Cubemap, Cubemap, Cubemap) pbrCubemaps, Texture brdfLut)
         {
             Dictionary<string, uint> counts = new Dictionary<string, uint>();
             List<string> expected = new List<string>() { "texture_diffuse", "texture_emissive", "texture_unknown", "texture_normal" };
@@ -129,6 +129,18 @@ namespace Quincy
             Gl.ActiveTexture(TextureUnit.Texture0 + Textures.Count);
             Gl.BindTexture(TextureTarget.Texture2d, light.ShadowMap.DepthMap);
             shader.SetInt("shadowMap", Textures.Count);
+            
+            Gl.ActiveTexture(TextureUnit.Texture0 + Textures.Count + 1);
+            Gl.BindTexture(TextureTarget.TextureCubeMap, pbrCubemaps.Item2.Id);
+            shader.SetInt("irradianceMap", Textures.Count + 1);
+            
+            Gl.ActiveTexture(TextureUnit.Texture0 + Textures.Count + 2);
+            Gl.BindTexture(TextureTarget.Texture2d, brdfLut.Id);
+            shader.SetInt("brdfLut", Textures.Count + 2);
+            
+            Gl.ActiveTexture(TextureUnit.Texture0 + Textures.Count + 3);
+            Gl.BindTexture(TextureTarget.TextureCubeMap, pbrCubemaps.Item3.Id);
+            shader.SetInt("prefilterMap", Textures.Count + 3);
 
             Gl.ActiveTexture(TextureUnit.Texture0);
 
