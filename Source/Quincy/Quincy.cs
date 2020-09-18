@@ -21,7 +21,7 @@ namespace Quincy
         public Quincy(string windowTitle, int windowResX, int windowResY)
         {
             window = NativeWindow.Create();
-            
+
             window.Render += Render;
             window.Close += Closing;
             window.ContextCreated += ContextCreated;
@@ -48,6 +48,8 @@ namespace Quincy
             Gl.Enable(EnableCap.DepthTest);
             Gl.Enable(EnableCap.Blend);
             Gl.Enable(EnableCap.CullFace);
+            Gl.Enable(EnableCap.FramebufferSrgb);
+            Gl.Enable((EnableCap)Gl.TEXTURE_CUBE_MAP_SEAMLESS);
             Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             imgui = new QuincyImGui();
             scene = new Scene();

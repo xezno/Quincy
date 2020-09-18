@@ -26,7 +26,10 @@ namespace Quincy.MathUtils
             get
             {
                 if (Math.Abs(Magnitude) < 0.0001f)
+                {
                     return new Vector3f(0, 0, 0);
+                }
+
                 return this / Magnitude;
             }
         }

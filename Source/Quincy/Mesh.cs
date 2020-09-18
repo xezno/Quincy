@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Quincy
 {
-    class Mesh
+    internal class Mesh
     {
         public List<Vertex> Vertices { get; set; }
         public List<uint> Indices { get; set; }
@@ -37,7 +37,7 @@ namespace Quincy
             var glVertices = new List<float>();
             foreach (var vertex in Vertices)
             {
-                glVertices.AddRange(new[] { 
+                glVertices.AddRange(new[] {
                     vertex.Position.x,
                     vertex.Position.y,
                     vertex.Position.z,
@@ -58,7 +58,7 @@ namespace Quincy
                     vertex.TexCoords.y
                 });
             }
-            
+
             Gl.BindBuffer(BufferTarget.ArrayBuffer, vbo);
             Gl.BufferData(BufferTarget.ArrayBuffer, (uint)glVertices.Count * sizeof(float), glVertices.ToArray(), BufferUsage.StaticDraw);
 
@@ -83,7 +83,7 @@ namespace Quincy
             Gl.BindVertexArray(0);
         }
 
-        public void Draw(Camera camera, Shader shader, Light light)
+        public void Draw(Camera camera, Shader shader, Light light, (Cubemap, Cubemap, Cubemap) pbrCubemaps, Texture brdfLut)
         {
             Dictionary<string, uint> counts = new Dictionary<string, uint>();
             List<string> expected = new List<string>() { "texture_diffuse", "texture_emissive", "texture_unknown", "texture_normal" };
@@ -100,7 +100,9 @@ namespace Quincy
                 string name = texture.Type;
 
                 if (!counts.ContainsKey(name))
+                {
                     counts.Add(name, 0);
+                }
 
                 string number = (++counts[name]).ToString();
 
@@ -122,13 +124,25 @@ namespace Quincy
 
             shader.SetVector3("camPos", camera.Position);
             shader.SetVector3("lightPos", light.Position);
-            
+
             shader.SetMatrix("lightProjectionMatrix", light.ProjMatrix);
             shader.SetMatrix("lightViewMatrix", light.ViewMatrix);
-            
+
             Gl.ActiveTexture(TextureUnit.Texture0 + Textures.Count);
             Gl.BindTexture(TextureTarget.Texture2d, light.ShadowMap.DepthMap);
             shader.SetInt("shadowMap", Textures.Count);
+
+            Gl.ActiveTexture(TextureUnit.Texture0 + Textures.Count + 1);
+            Gl.BindTexture(TextureTarget.TextureCubeMap, pbrCubemaps.Item2.Id);
+            shader.SetInt("irradianceMap", Textures.Count + 1);
+
+            Gl.ActiveTexture(TextureUnit.Texture0 + Textures.Count + 2);
+            Gl.BindTexture(TextureTarget.Texture2d, brdfLut.Id);
+            shader.SetInt("brdfLut", Textures.Count + 2);
+
+            Gl.ActiveTexture(TextureUnit.Texture0 + Textures.Count + 3);
+            Gl.BindTexture(TextureTarget.TextureCubeMap, pbrCubemaps.Item3.Id);
+            shader.SetInt("prefilterMap", Textures.Count + 3);
 
             Gl.ActiveTexture(TextureUnit.Texture0);
 
@@ -155,7 +169,7 @@ namespace Quincy
         public void Update(float deltaTime)
         {
             ModelMatrix = Matrix4x4f.Identity;
-            var scale = 0.0125f;
+            var scale = Constants.scale;
             ModelMatrix.Scale(scale, scale, scale);
         }
     }

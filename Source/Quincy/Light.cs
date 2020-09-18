@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace Quincy
 {
     [StructLayout(LayoutKind.Sequential)]
-    struct Light
+    internal struct Light
     {
         public Light(Vector3f position)
         {

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "xXFVZOgUh1zG1bINlbRaL06msO9R0cHulx6U731fkqYE6B7XyigWMh4ED01oYbffwitTXaiGhAhtYLjm2GGFYA==",
+  "dgSpecHash": "7Rv0X2YbV5Yzsngza5OSDp+lOAHq2CkEzi4DnGPD+mWIG8us0ipu5IHrN8ltHZSl/ajIgMFpUdUj7trLeJtwcg==",
   "success": true,
   "projectFilePath": "D:\\Projects\\Quincy\\Source\\Quincy\\Quincy.csproj",
   "expectedPackageFiles": [
@@ -28,7 +28,6 @@
     "C:\\Users\\Alex\\.nuget\\packages\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\Alex\\.nuget\\packages\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\Alex\\.nuget\\packages\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
-    "C:\\Users\\Alex\\.nuget\\packages\\stbisharp\\1.0.12\\stbisharp.1.0.12.nupkg.sha512",
     "C:\\Users\\Alex\\.nuget\\packages\\system.appcontext\\4.3.0\\system.appcontext.4.3.0.nupkg.sha512",
     "C:\\Users\\Alex\\.nuget\\packages\\system.buffers\\4.4.0\\system.buffers.4.4.0.nupkg.sha512",
     "C:\\Users\\Alex\\.nuget\\packages\\system.collections\\4.3.0\\system.collections.4.3.0.nupkg.sha512",
@@ -84,8 +83,7 @@
     "C:\\Users\\Alex\\.nuget\\packages\\system.threading.timer\\4.3.0\\system.threading.timer.4.3.0.nupkg.sha512",
     "C:\\Users\\Alex\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\Alex\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
-    "C:\\Users\\Alex\\.nuget\\packages\\winapi\\4.0.0\\winapi.4.0.0.nupkg.sha512",
-    "C:\\Users\\Alex\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.1.2\\microsoft.aspnetcore.app.ref.3.1.2.nupkg.sha512"
+    "C:\\Users\\Alex\\.nuget\\packages\\winapi\\4.0.0\\winapi.4.0.0.nupkg.sha512"
   ],
   "logs": []
 }

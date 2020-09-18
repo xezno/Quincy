@@ -1,11 +1,10 @@
 ﻿using OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Quincy.Primitives
 {
-    class Plane
+    internal class Plane
     {
         public static Vertex[] Vertices { get; } = new[]
         {
@@ -71,7 +70,7 @@ namespace Quincy.Primitives
             var glVertices = new List<float>();
             foreach (var vertex in Vertices)
             {
-                glVertices.AddRange(new[] { 
+                glVertices.AddRange(new[] {
                     vertex.Position.x,
                     vertex.Position.y,
                     vertex.Position.z,
@@ -92,7 +91,7 @@ namespace Quincy.Primitives
                     vertex.TexCoords.y
                 });
             }
-            
+
             Gl.BindBuffer(BufferTarget.ArrayBuffer, vbo);
             Gl.BufferData(BufferTarget.ArrayBuffer, (uint)glVertices.Count * sizeof(float), glVertices.ToArray(), BufferUsage.StaticDraw);
 
@@ -120,13 +119,18 @@ namespace Quincy.Primitives
         public void Draw(Shader shader, uint diffuseTexture)
         {
             shader.Use();
-            
+
             Gl.ActiveTexture(TextureUnit.Texture0);
             Gl.BindTexture(TextureTarget.Texture2d, diffuseTexture);
             shader.SetInt("diffuseTexture", 0);
 
             Gl.ActiveTexture(TextureUnit.Texture0);
 
+            DrawRaw();
+        }
+
+        public void DrawRaw()
+        {
             Gl.BindVertexArray(vao);
             Gl.DrawElements(PrimitiveType.Triangles, Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
             Gl.BindVertexArray(0);
