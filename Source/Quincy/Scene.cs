@@ -79,7 +79,7 @@ namespace Quincy
             Gl.ClearDepth(1.0f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             
-            framebufferRenderShader.SetFloat("exposure", .1f);
+            framebufferRenderShader.SetFloat("exposure", 3.0f);
             framebufferRenderPlane.Draw(framebufferRenderShader, mainFramebuffer.ColorTexture);
         }
 

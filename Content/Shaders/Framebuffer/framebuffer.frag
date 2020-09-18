@@ -14,6 +14,5 @@ void main()
 {
     vec3 hdrColor = texture2D(diffuseTexture, outTexCoords).xyz;
     vec3 tonemappedColor = vec3(1.0) - exp(-hdrColor * exposure);
-    tonemappedColor = pow(tonemappedColor, vec3(1.0 / gamma));
-    fragColor = vec4(hdrColor, 1.0);
+    fragColor = vec4(tonemappedColor, 1.0);
 }
