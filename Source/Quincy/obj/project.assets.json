@@ -340,33 +340,6 @@
           }
         }
       },
-      "StbiSharp/1.0.12": {
-        "type": "package",
-        "compile": {
-          "lib/netcoreapp3.0/StbiSharp.dll": {}
-        },
-        "runtime": {
-          "lib/netcoreapp3.0/StbiSharp.dll": {}
-        },
-        "runtimeTargets": {
-          "runtimes/linux-x64/native/libstbi.so": {
-            "assetType": "native",
-            "rid": "linux-x64"
-          },
-          "runtimes/osx-x64/native/libstbi.dylib": {
-            "assetType": "native",
-            "rid": "osx-x64"
-          },
-          "runtimes/win-x64/native/stbi.dll": {
-            "assetType": "native",
-            "rid": "win-x64"
-          },
-          "runtimes/win-x64/native/stbi.lib": {
-            "assetType": "native",
-            "rid": "win-x64"
-          }
-        }
-      },
       "System.AppContext/4.3.0": {
         "type": "package",
         "dependencies": {
@@ -1368,6 +1341,16 @@
         "runtime": {
           "bin/placeholder/OpenGL.Net.Math.dll": {}
         }
+      },
+      "StbiSharp/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v3.0",
+        "compile": {
+          "bin/placeholder/StbiSharp.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/StbiSharp.dll": {}
+        }
       }
     }
   },
@@ -1742,25 +1725,6 @@
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.nuspec",
         "runtimes/ubuntu.16.10-x64/native/System.Security.Cryptography.Native.OpenSsl.so"
-      ]
-    },
-    "StbiSharp/1.0.12": {
-      "sha512": "7OOhbypvzt9Jn6f1fUXRIus5vaAZ4U1McWMeMMCPtFh0uVLG/BoB4MchK9o+xQmk9z7m8BFe80DECYbZJsR/8w==",
-      "type": "package",
-      "path": "stbisharp/1.0.12",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "LICENSE.txt",
-        "lib/netcoreapp2.0/StbiSharp.dll",
-        "lib/netcoreapp3.0/StbiSharp.dll",
-        "lib/netstandard2.0/StbiSharp.dll",
-        "runtimes/linux-x64/native/libstbi.so",
-        "runtimes/osx-x64/native/libstbi.dylib",
-        "runtimes/win-x64/native/stbi.dll",
-        "runtimes/win-x64/native/stbi.lib",
-        "stbisharp.1.0.12.nupkg.sha512",
-        "stbisharp.nuspec"
       ]
     },
     "System.AppContext/4.3.0": {
@@ -4833,6 +4797,11 @@
       "type": "project",
       "path": "../../Other/OpenGL.Net/Source/OpenGL.Net/OpenGL.Net.Math.csproj",
       "msbuildProject": "../../Other/OpenGL.Net/Source/OpenGL.Net/OpenGL.Net.Math.csproj"
+    },
+    "StbiSharp/1.0.0": {
+      "type": "project",
+      "path": "../../Other/stbi-sharp/stbi-sharp.csproj",
+      "msbuildProject": "../../Other/stbi-sharp/stbi-sharp.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -4842,7 +4811,7 @@
       "OpenGL.Net >= 0.5.1",
       "OpenGL.Net.CoreUI >= 0.5.2",
       "OpenGL.Net.Math >= 0.5.1",
-      "StbiSharp >= 1.0.12"
+      "StbiSharp >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -4879,6 +4848,9 @@
             },
             "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.Math.csproj": {
               "projectPath": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.Math.csproj"
+            },
+            "D:\\Projects\\Quincy\\Other\\stbi-sharp\\stbi-sharp.csproj": {
+              "projectPath": "D:\\Projects\\Quincy\\Other\\stbi-sharp\\stbi-sharp.csproj"
             }
           }
         }
@@ -4899,10 +4871,6 @@
           "ImGui.NET": {
             "target": "Package",
             "version": "[1.78.0, )"
-          },
-          "StbiSharp": {
-            "target": "Package",
-            "version": "[1.0.12, )"
           }
         },
         "imports": [
@@ -4915,18 +4883,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[3.1.2, 3.1.2]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.300\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
       }
     }
   }

@@ -29,7 +29,7 @@ namespace Quincy
 
         public Scene()
         {
-            testModel = new Model("Content/Models/mcrn_tachi/scene.gltf");
+            testModel = new Model("Content/Models/rainier/scene.gltf");
             shader = new Shader("Content/Shaders/PBR/pbr.frag", "Content/Shaders/PBR/pbr.vert");
             depthShader = new Shader("Content/Shaders/Depth/depth.frag", "Content/Shaders/Depth/depth.vert");
             camera = new Camera(position: new Vector3f(0, 0f, 1f));
@@ -39,7 +39,7 @@ namespace Quincy
             framebufferRenderPlane = new Plane();
             mainFramebuffer = new Framebuffer();
 
-            var cubemaps = EquirectangularToCubemap.Convert("Content/HDRIs/gamrig_4k.hdr");
+            var cubemaps = EquirectangularToCubemap.Convert("Content/HDRIs/driving_school_8k.hdr");
             skybox = cubemaps.Item1;
             convolutedSkybox = cubemaps.Item2;
             prefilteredSkybox = cubemaps.Item3;
@@ -60,7 +60,7 @@ namespace Quincy
 
             // Render scene to framebuffer
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, mainFramebuffer.Fbo);
-            Gl.Viewport(0, 0, Constants.windowWidth, Constants.windowHeight);
+            Gl.Viewport(0, 0, Constants.renderWidth, Constants.renderHeight);
             Gl.ClearDepth(0.0f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             Gl.ClipControl(ClipControlOrigin.LowerLeft, ClipControlDepth.ZeroToOne);
@@ -74,11 +74,12 @@ namespace Quincy
             Gl.ClipControl(ClipControlOrigin.LowerLeft, ClipControlDepth.NegativeOneToOne);
 
             // Render framebuffer to screen
+            Gl.Viewport(0, 0, Constants.windowWidth, Constants.windowHeight);
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             Gl.ClearDepth(1.0f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             
-            framebufferRenderShader.SetFloat("exposure", 2.0f);
+            framebufferRenderShader.SetFloat("exposure", .1f);
             framebufferRenderPlane.Draw(framebufferRenderShader, mainFramebuffer.ColorTexture);
         }
 

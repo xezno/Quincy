@@ -14,19 +14,21 @@ namespace Quincy
             var prefilterShader = new Shader("Content/Shaders/Prefilter/prefilter.frag", "Content/Shaders/Prefilter/prefilter.vert");
             var skyHdri = HdriTexture.LoadFromFile(hdriPath);
 
-            var envMap = new Cubemap(RenderToCubemap(equirectangularToCubemapShader, 512, () => {
+            var envMap = new Cubemap(RenderToCubemap(equirectangularToCubemapShader, 512, () => 
+            {
                 equirectangularToCubemapShader.SetInt("equirectangularMap", 0);
                 Gl.ActiveTexture(TextureUnit.Texture0);
                 Gl.BindTexture(TextureTarget.Texture2d, skyHdri.Id);
             }));
-            var convMap = new Cubemap(RenderToCubemap(convolutionShader, 32, () => {
+            var convMap = new Cubemap(RenderToCubemap(convolutionShader, 64, () => 
+            {
                 convolutionShader.SetInt("environmentMap", 0);
                 Gl.ActiveTexture(TextureUnit.Texture0);
                 Gl.BindTexture(TextureTarget.TextureCubeMap, envMap.Id);
             }));
             var prefMap = new Cubemap(CreatePrefilteredEnvironmentMap(prefilterShader, () =>
             {
-                convolutionShader.SetInt("environmentMap", 0);
+                prefilterShader.SetInt("environmentMap", 0);
                 Gl.ActiveTexture(TextureUnit.Texture0);
                 Gl.BindTexture(TextureTarget.TextureCubeMap, envMap.Id);
             }));
@@ -38,6 +40,7 @@ namespace Quincy
                 prefMap
             );
         }
+
         public static uint RenderToCubemap(Shader shader, int resolution, Action preRender)
         {
             var cube = new Cube();
@@ -46,7 +49,7 @@ namespace Quincy
 
             var colorTexture = Gl.GenTexture();
             Gl.BindTexture(TextureTarget.Texture2d, colorTexture);
-            Gl.TexImage2D(TextureTarget.Texture2d, 0, InternalFormat.Rgb16f, Constants.windowWidth, Constants.windowHeight, 0, PixelFormat.Rgb, PixelType.Float, IntPtr.Zero);
+            Gl.TexImage2D(TextureTarget.Texture2d, 0, InternalFormat.Srgb, Constants.renderWidth, Constants.renderHeight, 0, PixelFormat.Rgb, PixelType.Float, IntPtr.Zero);
 
             Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.NearestMipmapNearest);
             Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
@@ -59,7 +62,7 @@ namespace Quincy
             Gl.BindTexture(TextureTarget.TextureCubeMap, envCubemap);
             for (int i = 0; i < 6; ++i)
             {
-                Gl.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, InternalFormat.Rgb16f, resolution, resolution, 0, PixelFormat.Rgb, PixelType.Float, IntPtr.Zero);
+                Gl.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0, InternalFormat.Srgb, resolution, resolution, 0, PixelFormat.Rgb, PixelType.Float, IntPtr.Zero);
             }
 
             Gl.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);

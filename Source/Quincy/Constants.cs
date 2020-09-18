@@ -8,5 +8,8 @@ namespace Quincy
     {
         public static int windowWidth   = 1600;
         public static int windowHeight  = 900;
+
+        public static int renderWidth   = windowWidth * 4;
+        public static int renderHeight  = windowHeight * 4;
     }
 }

@@ -1,4 +1,4 @@
-﻿using Assimp;
+using Assimp;
 using Assimp.Unmanaged;
 using OpenGL;
 using Quincy.DebugUtils;
