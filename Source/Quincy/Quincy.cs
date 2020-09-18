@@ -21,7 +21,7 @@ namespace Quincy
         public Quincy(string windowTitle, int windowResX, int windowResY)
         {
             window = NativeWindow.Create();
-            
+
             window.Render += Render;
             window.Close += Closing;
             window.ContextCreated += ContextCreated;

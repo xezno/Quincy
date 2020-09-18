@@ -3,7 +3,7 @@ using System;
 
 namespace Quincy
 {
-    class Framebuffer
+    internal class Framebuffer
     {
         public uint Fbo { get; }
         public uint DepthTexture { get; }

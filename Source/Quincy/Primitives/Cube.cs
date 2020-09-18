@@ -1,13 +1,12 @@
 ﻿using OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Quincy.Primitives
 {
-    class Cube
+    internal class Cube
     {
-        float[] cubeVertices = new[] {      
+        private float[] cubeVertices = new[] {
             -1.0f,  1.0f, 1.0f,
             -1.0f, -1.0f, 1.0f,
              1.0f, -1.0f, 1.0f,
@@ -98,7 +97,7 @@ namespace Quincy.Primitives
             var glVertices = new List<float>();
             foreach (var vertex in Vertices)
             {
-                glVertices.AddRange(new[] { 
+                glVertices.AddRange(new[] {
                     vertex.Position.x,
                     vertex.Position.y,
                     vertex.Position.z,
@@ -119,7 +118,7 @@ namespace Quincy.Primitives
                     vertex.TexCoords.y
                 });
             }
-            
+
             Gl.BindBuffer(BufferTarget.ArrayBuffer, vbo);
             Gl.BufferData(BufferTarget.ArrayBuffer, (uint)glVertices.Count * sizeof(float), glVertices.ToArray(), BufferUsage.StaticDraw);
 

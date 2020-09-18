@@ -4,7 +4,7 @@ using System;
 
 namespace Quincy
 {
-    class EquirectangularToCubemap
+    internal class EquirectangularToCubemap
     {
         public static (Cubemap, Cubemap, Cubemap) Convert(string hdriPath)
         {
@@ -14,13 +14,13 @@ namespace Quincy
             var prefilterShader = new Shader("Content/Shaders/Prefilter/prefilter.frag", "Content/Shaders/Prefilter/prefilter.vert");
             var skyHdri = HdriTexture.LoadFromFile(hdriPath);
 
-            var envMap = new Cubemap(RenderToCubemap(equirectangularToCubemapShader, 512, () => 
+            var envMap = new Cubemap(RenderToCubemap(equirectangularToCubemapShader, 512, () =>
             {
                 equirectangularToCubemapShader.SetInt("equirectangularMap", 0);
                 Gl.ActiveTexture(TextureUnit.Texture0);
                 Gl.BindTexture(TextureTarget.Texture2d, skyHdri.Id);
             }));
-            var convMap = new Cubemap(RenderToCubemap(convolutionShader, 64, () => 
+            var convMap = new Cubemap(RenderToCubemap(convolutionShader, 64, () =>
             {
                 convolutionShader.SetInt("environmentMap", 0);
                 Gl.ActiveTexture(TextureUnit.Texture0);
@@ -106,7 +106,7 @@ namespace Quincy
             var plane = new Plane();
             Gl.BindTexture(TextureTarget.Texture2d, brdfLutTexture);
             Gl.TexImage2D(TextureTarget.Texture2d, 0, InternalFormat.Rg16f, 512, 512, 0, PixelFormat.Rg, PixelType.Float, IntPtr.Zero);
-            
+
             Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
@@ -171,7 +171,7 @@ namespace Quincy
             shader.Use();
             preRender.Invoke();
             shader.SetMatrix("projectionMatrix", projMatrix);
-            
+
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, captureFbo);
             int mipLevels = 5;
             for (int mips = 0; mips < mipLevels; ++mips)
@@ -180,7 +180,7 @@ namespace Quincy
                 Gl.BindRenderbuffer(RenderbufferTarget.Renderbuffer, captureRbo);
                 Gl.RenderbufferStorage(RenderbufferTarget.Renderbuffer, InternalFormat.DepthComponent24, mipSize, mipSize);
                 Gl.Viewport(0, 0, mipSize, mipSize);
-                float roughness = (float)mips / (float)(mipLevels - 1);
+                float roughness = mips / (float)(mipLevels - 1);
                 shader.SetFloat("roughness", roughness);
                 for (int i = 0; i < 6; ++i)
                 {

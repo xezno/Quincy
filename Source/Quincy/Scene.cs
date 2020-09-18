@@ -5,7 +5,7 @@ using System;
 
 namespace Quincy
 {
-    class Scene
+    internal class Scene
     {
         private Model testModel;
         private Shader shader, depthShader;
@@ -29,22 +29,23 @@ namespace Quincy
 
         public Scene()
         {
-            testModel = new Model("Content/Models/rainier/scene.gltf");
+            testModel = new Model(Constants.model);
             shader = new Shader("Content/Shaders/PBR/pbr.frag", "Content/Shaders/PBR/pbr.vert");
             depthShader = new Shader("Content/Shaders/Depth/depth.frag", "Content/Shaders/Depth/depth.vert");
             camera = new Camera(position: new Vector3f(0, 0f, 1f));
             light = new Light(position: new Vector3f(0, 10f, 0));
-            
+
             framebufferRenderShader = new Shader("Content/Shaders/Framebuffer/framebuffer.frag", "Content/Shaders/Framebuffer/framebuffer.vert");
             framebufferRenderPlane = new Plane();
             mainFramebuffer = new Framebuffer();
 
-            var cubemaps = EquirectangularToCubemap.Convert("Content/HDRIs/driving_school_8k.hdr");
+            var cubemaps = EquirectangularToCubemap.Convert(Constants.hdri);
             skybox = cubemaps.Item1;
             convolutedSkybox = cubemaps.Item2;
             prefilteredSkybox = cubemaps.Item3;
 
-            brdfLut = new Texture() {
+            brdfLut = new Texture()
+            {
                 Id = EquirectangularToCubemap.CreateBrdfLut(),
                 Path = "brdfLut",
                 Type = "texture_lut"
@@ -58,7 +59,12 @@ namespace Quincy
         {
             Update();
 
-            // Render scene to framebuffer
+            RenderSceneToFramebuffer();
+            RenderFramebufferToScreen();
+        }
+
+        private void RenderSceneToFramebuffer()
+        {
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, mainFramebuffer.Fbo);
             Gl.Viewport(0, 0, Constants.renderWidth, Constants.renderHeight);
             Gl.ClearDepth(0.0f);
@@ -72,20 +78,22 @@ namespace Quincy
 
             Gl.DepthFunc(DepthFunction.Less);
             Gl.ClipControl(ClipControlOrigin.LowerLeft, ClipControlDepth.NegativeOneToOne);
+        }
 
-            // Render framebuffer to screen
+        private void RenderFramebufferToScreen()
+        {
             Gl.Viewport(0, 0, Constants.windowWidth, Constants.windowHeight);
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             Gl.ClearDepth(1.0f);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            
-            framebufferRenderShader.SetFloat("exposure", 3.0f);
+
+            framebufferRenderShader.SetFloat("exposure", Constants.exposure);
             framebufferRenderPlane.Draw(framebufferRenderShader, mainFramebuffer.ColorTexture);
         }
 
         public void RenderShadows()
         {
-            Gl.Disable(EnableCap.CullFace); //Gl.CullFace(CullFaceMode.Front);
+            Gl.Disable(EnableCap.CullFace);
 
             Gl.Viewport(0, 0, (int)light.ShadowMap.Resolution.x, (int)light.ShadowMap.Resolution.y);
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, light.ShadowMap.DepthMapFbo);
@@ -94,8 +102,8 @@ namespace Quincy
             light.Render();
             testModel.DrawShadows(light, depthShader);
 
-            Gl.Enable(EnableCap.CullFace); //Gl.CullFace(CullFaceMode.Back);
-                        
+            Gl.Enable(EnableCap.CullFace);
+
             Gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
 
@@ -111,7 +119,6 @@ namespace Quincy
         private void DrawSkybox()
         {
             Gl.Disable(EnableCap.CullFace);
-            // Gl.DepthFunc(DepthFunction.Lequal);
             var modelMatrix = Matrix4x4f.Identity;
             var scale = 10000.0f;
             modelMatrix.Scale(scale, scale, scale);
@@ -127,7 +134,6 @@ namespace Quincy
             skyboxCube.Draw();
 
             Gl.BindTexture(TextureTarget.TextureCubeMap, 0);
-            // Gl.DepthFunc(DepthFunction.Greater);
             Gl.Enable(EnableCap.CullFace);
         }
     }

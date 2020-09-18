@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Quincy
 {
-    struct HdriTexture
+    internal struct HdriTexture
     {
         public uint Id { get; }
 
@@ -44,7 +44,7 @@ namespace Quincy
             Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
             Gl.TexParameter(TextureTarget.Texture2d, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
-                
+
             Gl.BindTexture(TextureTarget.Texture2d, 0);
             image.Dispose();
 

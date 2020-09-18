@@ -1,7 +1,6 @@
 ﻿using ImGuiNET;
 using OpenGL;
 using OpenGL.CoreUI;
-using Quincy.DebugUtils;
 using Quincy.MathUtils;
 using System;
 using System.Numerics;
@@ -29,7 +28,9 @@ namespace Quincy
             var imGuiContext = ImGui.CreateContext();
 
             if (ImGui.GetCurrentContext() == IntPtr.Zero)
+            {
                 ImGui.SetCurrentContext(imGuiContext);
+            }
 
             io = ImGui.GetIO();
 

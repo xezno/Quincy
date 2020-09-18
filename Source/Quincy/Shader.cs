@@ -1,14 +1,13 @@
 ﻿using OpenGL;
 using Quincy.DebugUtils;
 using Quincy.MathUtils;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
 namespace Quincy
 {
-    class Shader
+    internal class Shader
     {
         private List<string> knownMissingVariables = new List<string>();
         public uint Id { get; set; }
@@ -23,7 +22,7 @@ namespace Quincy
             Gl.CompileShader(fragId);
 
             CheckForErrors(fragId);
-            
+
             var vertId = Gl.CreateShader(ShaderType.VertexShader);
             Gl.ShaderSource(vertId, new[] { vertGlslContents });
             Gl.CompileShader(vertId);
@@ -35,8 +34,8 @@ namespace Quincy
             Gl.AttachShader(Id, vertId);
             Gl.LinkProgram(Id);
 
-            //Gl.DeleteShader(fragId);
-            //Gl.DeleteShader(vertId);
+            Gl.DeleteShader(fragId);
+            Gl.DeleteShader(vertId);
         }
 
         public void Use()
@@ -90,7 +89,9 @@ namespace Quincy
             if (loc < 0)
             {
                 if (knownMissingVariables.Contains(name))
+                {
                     return false;
+                }
 
                 Logging.Log($"No variable {name}", Logging.Severity.Medium);
                 knownMissingVariables.Add(name);

@@ -4,7 +4,7 @@ using System;
 
 namespace Quincy
 {
-    class Camera
+    internal class Camera
     {
         private Vector3f position;
         public Vector3f Position { get => position; set => position = value; }
@@ -25,7 +25,7 @@ namespace Quincy
         {
             this.position = position;
             ProjMatrix = CreateInfReversedZProj(FieldOfView,
-                (float)Constants.renderWidth / (float)Constants.renderHeight,
+                Constants.renderWidth / (float)Constants.renderHeight,
                 NearPlane);
         }
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
 
 namespace Quincy.DebugUtils
 {
@@ -50,7 +48,9 @@ namespace Quincy.DebugUtils
             var stackTrace = new StackTrace();
 
             if (severity == Severity.Fatal)
+            {
                 throw new Exception(str);
+            }
 
             Console.ForegroundColor = SeverityToConsoleColor(severity);
             var logTextNoSeverity = str;

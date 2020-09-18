@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace Quincy
 {
-    struct Cubemap
+    internal struct Cubemap
     {
         public uint Id { get; }
 
@@ -27,7 +27,9 @@ namespace Quincy
 
                 var imageFormat = PixelFormat.Rgb;
                 if (image.NumChannels == 4)
+                {
                     imageFormat = PixelFormat.Rgba;
+                }
 
                 var textureDataPtr = Marshal.AllocHGlobal(image.Data.Length);
                 Marshal.Copy(image.Data.ToArray(), 0, textureDataPtr, image.Data.Length);
@@ -46,7 +48,7 @@ namespace Quincy
                 Gl.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
                 Gl.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
                 Gl.TexParameter(TextureTarget.TextureCubeMap, TextureParameterName.TextureWrapR, (int)TextureWrapMode.ClampToEdge);
-                
+
                 Gl.BindTexture(TextureTarget.TextureCubeMap, 0);
                 image.Dispose();
             }

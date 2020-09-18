@@ -1,19 +1,13 @@
 using Assimp;
-using Assimp.Unmanaged;
 using OpenGL;
 using Quincy.DebugUtils;
 using Quincy.MathUtils;
-using StbiSharp;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Quincy
 {
-    class Model
+    internal class Model
     {
         private List<Mesh> meshes = new List<Mesh>();
         private string directory;
@@ -57,16 +51,16 @@ namespace Quincy
             });
             logStream.Attach();
 
-            var scene = importer.ImportFile(path, PostProcessSteps.Triangulate | 
-                                                  PostProcessSteps.PreTransformVertices | 
-                                                  PostProcessSteps.RemoveRedundantMaterials | 
+            var scene = importer.ImportFile(path, PostProcessSteps.Triangulate |
+                                                  PostProcessSteps.PreTransformVertices |
+                                                  PostProcessSteps.RemoveRedundantMaterials |
                                                   PostProcessSteps.CalculateTangentSpace |
                                                   PostProcessSteps.OptimizeMeshes |
-                                                  PostProcessSteps.OptimizeGraph | 
+                                                  PostProcessSteps.OptimizeGraph |
                                                   PostProcessSteps.ValidateDataStructure |
                                                   PostProcessSteps.GenerateNormals |
                                                   PostProcessSteps.FlipUVs);
-            
+
             directory = Path.GetDirectoryName(path);
 
             ProcessNode(scene.RootNode, scene);
@@ -144,7 +138,7 @@ namespace Quincy
                         (byte)(material.ColorDiffuse.A * 255)
                     }, 1, 1, 4, "texture_diffuse"));
                 }
-                
+
                 var specularMaps = LoadMaterialTextures(material, TextureType.Specular, "texture_specular");
                 textures.AddRange(specularMaps);
 
@@ -158,10 +152,10 @@ namespace Quincy
                         (byte)(material.ColorSpecular.A * 255)
                     }, 1, 1, 4, "texture_specular"));
                 }
-                
+
                 var normalMaps = LoadMaterialTextures(material, TextureType.Normals, "texture_normal");
                 textures.AddRange(normalMaps);
-                
+
                 var emissiveMaps = LoadMaterialTextures(material, TextureType.Emissive, "texture_emissive");
                 textures.AddRange(emissiveMaps);
 
@@ -175,7 +169,7 @@ namespace Quincy
                         (byte)(material.ColorEmissive.A * 255)
                     }, 1, 1, 4, "texture_emissive"));
                 }
-                
+
                 var unknownMaps = LoadMaterialTextures(material, TextureType.Unknown, "texture_unknown"); // includes roughness
                 textures.AddRange(unknownMaps);
             }
@@ -190,7 +184,7 @@ namespace Quincy
             return new Mesh(vertices, indices, textures, oglTransform);
         }
 
-        List<Texture> LoadMaterialTextures(Material material, TextureType textureType, string typeName)
+        private List<Texture> LoadMaterialTextures(Material material, TextureType textureType, string typeName)
         {
             var textures = new List<Texture>();
 
@@ -199,7 +193,9 @@ namespace Quincy
                 material.GetMaterialTexture(textureType, i, out var textureSlot);
 
                 if (string.IsNullOrEmpty(textureSlot.FilePath))
+                {
                     continue;
+                }
 
                 Logging.Log($"Loading {directory}/{textureSlot.FilePath} as {typeName}");
 
