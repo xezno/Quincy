@@ -340,6 +340,15 @@
           }
         }
       },
+      "StbImageSharp/2.27.8": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/StbImageSharp.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/StbImageSharp.dll": {}
+        }
+      },
       "System.AppContext/4.3.0": {
         "type": "package",
         "dependencies": {
@@ -1341,16 +1350,6 @@
         "runtime": {
           "bin/placeholder/OpenGL.Net.Math.dll": {}
         }
-      },
-      "StbiSharp/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v3.0",
-        "compile": {
-          "bin/placeholder/StbiSharp.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/StbiSharp.dll": {}
-        }
       }
     }
   },
@@ -1725,6 +1724,19 @@
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
         "runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.nuspec",
         "runtimes/ubuntu.16.10-x64/native/System.Security.Cryptography.Native.OpenSsl.so"
+      ]
+    },
+    "StbImageSharp/2.27.8": {
+      "sha512": "/LM7rEtSf7SWEJOPJfKVh3L0q/a+uYHOgaZg0bfz7QTqTzGUBRUcDWdxcjcANyj7RCSLH+40bmOflKziLTnrfw==",
+      "type": "package",
+      "path": "stbimagesharp/2.27.8",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/StbImageSharp.dll",
+        "lib/netstandard2.0/StbImageSharp.dll",
+        "stbimagesharp.2.27.8.nupkg.sha512",
+        "stbimagesharp.nuspec"
       ]
     },
     "System.AppContext/4.3.0": {
@@ -4797,11 +4809,6 @@
       "type": "project",
       "path": "../../Other/OpenGL.Net/Source/OpenGL.Net/OpenGL.Net.Math.csproj",
       "msbuildProject": "../../Other/OpenGL.Net/Source/OpenGL.Net/OpenGL.Net.Math.csproj"
-    },
-    "StbiSharp/1.0.0": {
-      "type": "project",
-      "path": "../../Other/stbi-sharp/stbi-sharp.csproj",
-      "msbuildProject": "../../Other/stbi-sharp/stbi-sharp.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -4811,11 +4818,12 @@
       "OpenGL.Net >= 0.5.1",
       "OpenGL.Net.CoreUI >= 0.5.2",
       "OpenGL.Net.Math >= 0.5.1",
-      "StbiSharp >= 1.0.0"
+      "StbImageSharp >= 2.27.8"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Alex\\.nuget\\packages\\": {}
+    "C:\\Users\\Alex\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -4826,8 +4834,12 @@
       "packagesPath": "C:\\Users\\Alex\\.nuget\\packages\\",
       "outputPath": "D:\\Projects\\Quincy\\Source\\Quincy\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
         "C:\\Users\\Alex\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -4835,10 +4847,12 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {}
+        "https://api.nuget.org/v3/index.json": {},
+        "https://www.myget.org/F/avalonia-ci/api/v2": {}
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "projectReferences": {
             "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net.CoreUI\\OpenGL.Net.CoreUI.csproj": {
               "projectPath": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net.CoreUI\\OpenGL.Net.CoreUI.csproj"
@@ -4848,9 +4862,6 @@
             },
             "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.Math.csproj": {
               "projectPath": "D:\\Projects\\Quincy\\Other\\OpenGL.Net\\Source\\OpenGL.Net\\OpenGL.Net.Math.csproj"
-            },
-            "D:\\Projects\\Quincy\\Other\\stbi-sharp\\stbi-sharp.csproj": {
-              "projectPath": "D:\\Projects\\Quincy\\Other\\stbi-sharp\\stbi-sharp.csproj"
             }
           }
         }
@@ -4863,6 +4874,7 @@
     },
     "frameworks": {
       "netcoreapp3.1": {
+        "targetAlias": "netcoreapp3.1",
         "dependencies": {
           "AssimpNet": {
             "target": "Package",
@@ -4871,6 +4883,10 @@
           "ImGui.NET": {
             "target": "Package",
             "version": "[1.78.0, )"
+          },
+          "StbImageSharp": {
+            "target": "Package",
+            "version": "[2.27.8, )"
           }
         },
         "imports": [
@@ -4883,12 +4899,30 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[3.1.10, 3.1.10]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[3.1.22, 3.1.22]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[3.1.0, 3.1.0]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[3.1.0, 3.1.0]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   }
