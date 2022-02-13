@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30128.74
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quincy", "Quincy\Quincy.csproj", "{0995FAD0-D6B5-439C-9B6F-B5901F48CFBD}"
 EndProject
@@ -12,8 +12,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenGL.Net.CoreUI", "..\Other\OpenGL.Net\Source\OpenGL.Net.CoreUI\OpenGL.Net.CoreUI.csproj", "{189BB471-CF58-418A-8177-41C87311D897}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Other", "Other", "{F739702F-6156-4837-9F75-6FAC8A7A08FB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "stbi-sharp", "..\Other\stbi-sharp\stbi-sharp.csproj", "{73FCB22E-1709-41CA-8E05-87B042BB0D2F}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -68,18 +66,6 @@ Global
 		{189BB471-CF58-418A-8177-41C87311D897}.Release|x64.Build.0 = Release|x64
 		{189BB471-CF58-418A-8177-41C87311D897}.Release|x86.ActiveCfg = Release|x86
 		{189BB471-CF58-418A-8177-41C87311D897}.Release|x86.Build.0 = Release|x86
-		{73FCB22E-1709-41CA-8E05-87B042BB0D2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73FCB22E-1709-41CA-8E05-87B042BB0D2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73FCB22E-1709-41CA-8E05-87B042BB0D2F}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{73FCB22E-1709-41CA-8E05-87B042BB0D2F}.Debug|x64.Build.0 = Debug|Any CPU
-		{73FCB22E-1709-41CA-8E05-87B042BB0D2F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{73FCB22E-1709-41CA-8E05-87B042BB0D2F}.Debug|x86.Build.0 = Debug|Any CPU
-		{73FCB22E-1709-41CA-8E05-87B042BB0D2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73FCB22E-1709-41CA-8E05-87B042BB0D2F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73FCB22E-1709-41CA-8E05-87B042BB0D2F}.Release|x64.ActiveCfg = Release|Any CPU
-		{73FCB22E-1709-41CA-8E05-87B042BB0D2F}.Release|x64.Build.0 = Release|Any CPU
-		{73FCB22E-1709-41CA-8E05-87B042BB0D2F}.Release|x86.ActiveCfg = Release|Any CPU
-		{73FCB22E-1709-41CA-8E05-87B042BB0D2F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,7 +74,6 @@ Global
 		{9C5DEC90-A070-41FE-8494-3869858DBAA7} = {F739702F-6156-4837-9F75-6FAC8A7A08FB}
 		{CE142E5B-8737-425C-9811-3F55EC27FD9C} = {F739702F-6156-4837-9F75-6FAC8A7A08FB}
 		{189BB471-CF58-418A-8177-41C87311D897} = {F739702F-6156-4837-9F75-6FAC8A7A08FB}
-		{73FCB22E-1709-41CA-8E05-87B042BB0D2F} = {F739702F-6156-4837-9F75-6FAC8A7A08FB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ECEE94BE-DDE0-49CA-B683-9D57DA0E5522}
