@@ -1,6 +1,6 @@
 ﻿using OpenGL;
 using Quincy.DebugUtils;
-using StbiSharp;
+using StbImageSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,10 +29,10 @@ namespace Quincy
             var texturePtr = Gl.GenTexture();
             Gl.BindTexture(TextureTarget.Texture2d, texturePtr);
             var fileData = File.ReadAllBytes(filePath);
-            var image = Stbi.LoadFromMemory(fileData, 4);
+            var image = ImageResult.FromMemory(fileData, ColorComponents.RedGreenBlueAlpha);
 
             var imageFormat = PixelFormat.Rgb;
-            if (image.NumChannels == 4)
+            if (image.Comp == ColorComponents.RedGreenBlueAlpha)
             {
                 imageFormat = PixelFormat.Rgba;
             }
@@ -55,7 +55,6 @@ namespace Quincy
             Gl.TexParameterf(TextureTarget.Texture2d, (TextureParameterName)Gl.TEXTURE_MAX_ANISOTROPY, 16.0f); // (should be) 16x anisotropic filtering
             Gl.GenerateMipmap(TextureTarget.Texture2d);
 
-            image.Dispose();
             Marshal.FreeHGlobal(textureDataPtr);
 
             Logging.Log($"Loaded texture {filePath}, ptr {texturePtr}");

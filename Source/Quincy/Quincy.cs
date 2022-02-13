@@ -14,7 +14,7 @@ namespace Quincy
         public bool isRunning = true;
         private Scene scene;
         private Gl.DebugProc debugProc;
-        private QuincyImGui imgui;
+        // private QuincyImGui imgui;
         #endregion
 
         #region Methods
@@ -51,7 +51,7 @@ namespace Quincy
             Gl.Enable(EnableCap.FramebufferSrgb);
             Gl.Enable((EnableCap)Gl.TEXTURE_CUBE_MAP_SEAMLESS);
             Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            imgui = new QuincyImGui();
+            // imgui = new QuincyImGui();
             scene = new Scene();
         }
 
